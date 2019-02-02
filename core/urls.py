@@ -4,7 +4,9 @@ from . import views
 
 urlpatterns = [
     path('', views.github, name='github'),
-    # path('github/', views.github, name='github'),
-    # path('github/client/', views.github_client, name='github_client'),
-    # path('oxford/', views.oxford, name='oxford'),
+    path('gsoclist/', views.showUser, name='gsoclist'),
+    path('all_list/', views.showAll, name='all_list'),
+    path('add_user/', views.addUser, name='add_user'),
+    path('remove_user/', views.removeUser, name='remove_user'),
+    path('ajax/load_users/', views.loadUsers, name='load_users'),
 ]
