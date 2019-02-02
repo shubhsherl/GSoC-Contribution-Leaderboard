@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>GitHub API</h2>
+  <form method="get">
+    <input type="text" name="username">
+    <button type="submit">search on github</button>
+  </form>
+  {% if search_was_successful %}
+    {% if True %}
+      <table summary="no_orderDate">
+        <tr><th></th><th>Username</th><th>Commits</th>
+        {% for key, data in search_result %}
+            <!-- {% if not queue.orderDate %} -->
+                <tr><td><img src="{{data.avatar}}" height="42" width="42"></td><td><a href="https://www.github.com/{{key}}">{{ key }}</a></td><td>{{ data.commits }}</td></tr>
+            <!-- {% endif %} -->
+        {% endfor %}
+        </table>
+        <!-- <p><em>{{ search_result }}</em></p> -->
+    {% else %}
+      <p><em>{{ contributors }}</em></p>
+    {% endif %}
+    <!-- <p>Rate limit: {{ search_result }}</p> -->
+  {% endif %}
+{% endblock %}
