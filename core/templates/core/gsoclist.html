@@ -7,15 +7,17 @@
     <button type="submit">search on github</button>
   </form>
       <table summary="no_orderDate">
-        <tr><th></th><th>Username</th><th>Commits</th>
+        <tr><th></th><th>Username</th><th>Commits</th><th>Add</th><th>Delete</th><th>Action</th></tr>
         {% for user in users %}
-            <!-- {% if not queue.orderDate %} -->
-            <!-- <p><em>{{ user }}</em></p> -->
-            <tr><td><img src="{{user.fields.avatar}}" height="42" width="42"></td><td><a href="https://www.github.com/{{user.fields.login}}">{{ user.fields.login }}</a></td><td>{{ user.fields.totalCommits }}</td></tr>
-            <!-- {% endif %} -->
+            <tr>
+              <td><img src="{{user.fields.avatar}}" height="42" width="42"></td>
+              <td><a href="https://www.github.com/{{user.fields.login}}">{{ user.fields.login }}</a></td>
+              <td>{{ user.fields.totalCommits }}</td>
+              <td>{{ user.fields.totalAdd }}</td>
+              <td>{{ user.fields.totalDelete }}</td>
+              <td><a href="{% url 'remove_user' user=user.fields.login %}"}>Remove</a></td>
+            </tr>
         {% endfor %}
         </table>
-        <!-- <p><em>{{ log }}</em></p> -->
-      <!-- <p><em>NO DATA TO SHOW</em></p> -->
-    <!-- <p>Rate limit: {{ search_result }}</p> -->
+        <p>{{log}}</p>
 {% endblock %}

@@ -9,15 +9,26 @@
   {% if True %}
     {% if True %}
       <table summary="no_orderDate">
-        <tr><th></th><th>Username</th><th>Commits</th>
+        <tr><th></th><th>Username</th><th>Commits</th><th>Add</th><th>Delete</th><th>Action</th></tr>
         {% for user in users %}
             <!-- {% if not queue.orderDate %} -->
             <!-- <p><em>{{ user }}</em></p> -->
-            <tr><td><img src="{{user.fields.avatar}}" height="42" width="42"></td><td><a href="https://www.github.com/{{user.fields.login}}">{{ user.fields.login }}</a></td><td>{{ user.fields.totalCommits }}</td></tr>
+            <tr>
+              <td><img src="{{user.fields.avatar}}" height="42" width="42"></td>
+              <td><a href="https://www.github.com/{{user.fields.login}}">{{ user.fields.login }}</a></td>
+              <td>{{ user.fields.totalCommits }}</td>
+              <td>{{ user.fields.totalAdd }}</td>
+              <td>{{ user.fields.totalDelete }}</td>
+              {% if user.fields.gsoc %}
+                <td><a href="{% url 'remove_user' user=user.fields.login %}">Remove from GsocList</a></td>
+              {% else %}
+                <td><a href="{% url 'add_user' user=user.fields.login %}">Add to GsocList</a></td>
+              {% endif %}
+            </tr>
             <!-- {% endif %} -->
         {% endfor %}
         </table>
-        <!-- <p><em>{{ log }}</em></p> -->
+        {% comment %} <p><em>{{ log }}</em></p> {% endcomment %}
     {% else %}
       <p><em>NO DATA TO SHOW</em></p>
     {% endif %}
