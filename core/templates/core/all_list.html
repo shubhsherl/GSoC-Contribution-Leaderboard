@@ -1,37 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>GitHub API</h2>
-  <form method="get">
-    <input type="text" name="username">
-    <button type="submit">search on github</button>
-  </form>
-  {% if True %}
-    {% if True %}
-      <table summary="no_orderDate">
-        <tr><th></th><th>Username</th><th>Commits</th><th>Add</th><th>Delete</th><th>Action</th></tr>
-        {% for user in users %}
-            <!-- {% if not queue.orderDate %} -->
-            <!-- <p><em>{{ user }}</em></p> -->
-            <tr>
-              <td><img src="{{user.fields.avatar}}" height="42" width="42"></td>
-              <td><a href="https://www.github.com/{{user.fields.login}}">{{ user.fields.login }}</a></td>
-              <td>{{ user.fields.totalCommits }}</td>
-              <td>{{ user.fields.totalAdd }}</td>
-              <td>{{ user.fields.totalDelete }}</td>
-              {% if user.fields.gsoc %}
-                <td><a href="{% url 'remove_user' user=user.fields.login %}">Remove from GsocList</a></td>
-              {% else %}
-                <td><a href="{% url 'add_user' user=user.fields.login %}">Add to GsocList</a></td>
-              {% endif %}
+  <h2>All Contributors</h2>
+        <table style="margin: 0; width: 100%; font-size: 16px;" cellpadding="0" cellspacing="0">
+          <tr><td></td>
+              <td colspan="2" style="font-weight: bold; padding: 32px 8px 8px 8px; color: #333;">
+                  Username
+              </td>
+              <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Commits</td>
+              <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Additions</td>
+              <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Deletions</td>
             </tr>
-            <!-- {% endif %} -->
-        {% endfor %}
-        </table>
-        {% comment %} <p><em>{{ log }}</em></p> {% endcomment %}
-    {% else %}
-      <p><em>NO DATA TO SHOW</em></p>
-    {% endif %}
-    <!-- <p>Rate limit: {{ search_result }}</p> -->
-  {% endif %}
+          {% for user in users %}
+          <tr>
+              <td><img src="{{user.fields.avatar}}" height="42" width="42"></td>
+              <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+                <a href="https://www.github.com/{{user.fields.login}}">{{ user.fields.login }}</a>
+              </td><td></td>
+              <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+                {{ user.fields.totalCommits }}
+              </td>
+              <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+                {{ user.fields.totalAdd }}
+              </td>
+              <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+                {{ user.fields.totalDelete }}
+              </td>
+              <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
+                {% if user.fields.gsoc %}
+                <!-- <td style="background: rgb(156, 13, 13); font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;"> -->
+                  <td><a href="{% url 'remove_user' user=user.fields.login %}">Remove</a>
+                </td>
+              {% else %}
+              <!-- <td style="background: rgb(12, 184, 12); font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;"> -->
+                <td><a href="{% url 'add_user' user=user.fields.login %}">Add</a>
+              </td>
+              {% endif %}
+              </td>
+          </tr>
+          {% endfor %}
+      </table>
+      <br />
 {% endblock %}
+

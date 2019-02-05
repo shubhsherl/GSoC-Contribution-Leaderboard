@@ -1,8 +1,19 @@
-<!doctype html>
+{# Load the tag library #}
+{% load bootstrap4 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+{# Display a form #}
+<!doctype html>{% load staticfiles %}
 <html lang="en-us">
   <head>
     <meta charset="utf-8">
-    <title>RESTful APIs Example</title>
+    <title>RocketChat LeaderBoard</title>
     <style type="text/css">
       body {
         max-width: 800px;
@@ -10,21 +21,87 @@
         padding: 0 20px;
       }
     </style>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
   </head>
   <body>
-      {% if messages %}
-      <ul class="messages">
-          {% for message in messages %}
-            {% if message.login %}
-              {% for message_ in message.login %}
-          <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-              {{message_.message}}
-          </li>
-          {% endfor %}
-          {% endif %}          
-          {% endfor %}
-      </ul>
-      {% endif %}
+    <br/><br/>
+    <!-- <nav class="navbar navbar-default">
+      <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
+      <div class="navbar-header">
+          <button
+              type="button"
+              class="navbar-toggle collapsed"
+              data-toggle="collapse"
+              data-target="#navbar"
+              aria-expanded="false"
+              aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand"
+              href=""
+              title=" - Monitor Cron Jobs">
+              <img
+                  id="logo"
+                  height="50"
+                  width="59"
+                  src="{% static 'img/logo.png'%}"
+                  srcset="{% static 'img/logo.png'%} 1x, {% static 'img/logo@2x.png'%} 2x"
+                  >
+          </a>
+
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+          <ul id="nav-main-sections" class="nav navbar-nav">
+                  <li {% if page == 'checks' %} class="active" {% endif %}>
+                      <a href="">Checks</a>
+                  </li>
+
+                  <li class="active">
+                      <a href="">Integrations</a>
+                  </li>
+                  <li class="active">
+                    <a href="">Integrations</a>
+                </li>
+                <li class="active">
+                  <a href="">Integrations</a>
+              </li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                  <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                      <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                      <li class="dropdown-header">{{ project }}</li>
+                      <li>
+                          <a href="">
+                              Checks
+                          </a>
+                      </li>
+                      <li>
+                          <a href="">Project Settings</a>
+                      </li>
+                      <li role="separator" class="divider"></li>
+
+                  <li><a href="">Account Settings</a></li>
+                  <li><a href="">Log Out</a></li>
+                  </ul>
+              </li>
+          </ul>
+          {% if show_search %}
+          <form class="navbar-form navbar-right hidden-xs hidden-sm">
+              <input id="search" type="text" placeholder="Search checks&hellip;" class="form-control" value="{{ search }}">
+          </form>
+          {% endif %}
+      </div>
+
+      </div>
+  </nav> -->
+
     <a href="https://github.com/RocketChat"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
     <header>
       <h1 style="margin-bottom: 0">Rocket.Chat Leaderboard</h1>
