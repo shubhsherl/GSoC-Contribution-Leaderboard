@@ -1,3 +1,22 @@
 from django.contrib import admin
+from .models import Glist, User
 
-# Register your models here.
+def mark_gsoc(modeladmin, request, queryset):
+    queryset.update(gsoc=True)
+mark_gsoc.short_description = "Mark Selected as GSoC Aspirants"
+
+def unmark_gsoc(modeladmin, request, queryset):
+    queryset.update(gsoc=False)
+unmark_gsoc.short_description = "Unmark Selected as GSoC Aspirants"
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['login', 'gsoc']
+    search_fields = ['login']
+    actions = [mark_gsoc, unmark_gsoc]
+
+class GlistAdmin(admin.ModelAdmin):
+    list_display = ['login']
+    search_fields = ['login']
+
+admin.site.register(Glist, GlistAdmin)
+admin.site.register(User, UserAdmin)

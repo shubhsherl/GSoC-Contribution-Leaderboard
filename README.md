@@ -34,5 +34,19 @@ Finally, run the development server:
 python manage.py runserver
 ```
 
+## Admin Setup
+
+First, create a super User:
+
+```bash
+python manage.py createsuperuser
+```
+
+Run the project, and open admin({url}/admin) page:
+
+Login using the created superuser.
+
+Add/Remove user to GSoC list using action in Core>Users.
+
 The project will be available at **127.0.0.1:8000**.
 

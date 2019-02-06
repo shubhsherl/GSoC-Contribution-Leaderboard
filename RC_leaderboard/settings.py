@@ -157,15 +157,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default='dfdsf')
-
-OXFORD_APP_ID = config('OXFORD_APP_ID', default='sdfsdf')
-
-OXFORD_APP_KEY = config('OXFORD_APP_KEY', default='sdfsdf')
-
-IPSTACK_API_KEY = config('IPSTACK_API_KEY', default='sdfsdf')
-
-
