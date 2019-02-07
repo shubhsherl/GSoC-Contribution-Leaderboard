@@ -1,8 +1,7 @@
 # RC_leaderboard
 
-Rocket.Chat Leaderboard for GSoC aspirants. Register yourself and see
-your position on leaderboard based on the commits and PRs, submitted by
-you on any repo of Rocket.Chat.
+Rocket.Chat Leaderboard for GSoC aspirants. Build using Django Framework in Python3. 
+Register yourself and see your position on leaderboard based on the Commits, Issues and PRs, submitted by you on any repo of Rocket.Chat.
 
 Happy Coding.
 
@@ -19,6 +18,8 @@ Install the requirements:
 ```bash
 pip install -r requirements.txt
 ```
+
+Add your Github Auth Token in `RC_leaderboard/setting.py`
 
 *PS: If you have issues installing either `gunicorn` or `psycopg2`, you can remove them from the requirements.txt file and run the command again.*
 

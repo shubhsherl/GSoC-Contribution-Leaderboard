@@ -152,3 +152,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Github Auth Token 
+GITHUB_AUTH_TOKEN = config('GITHUB_AUTH_TOKEN', default='YOUR_AUTH_TOKEN')
+
