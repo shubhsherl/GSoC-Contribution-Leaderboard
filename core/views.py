@@ -38,27 +38,18 @@ def getOrganizationContributors(repoList):
 def getRepoContributors(owner, repoName):
     url = 'https://api.github.com/repos/%s/%s/stats/contributors' %(owner, repoName)
     response = requests.get(url, headers={"Authorization":"token " + AUTH_TOKEN})
-    # if (response.status_code == 200):
     return response.json()
-    # else:
-        # return {}
 
 def getRepoPR(owner, repoName):
     url = 'https://api.github.com/repos/%s/%s/pulls' %(owner, repoName)
     response = requests.get(url, headers={"Authorization":"token " + AUTH_TOKEN})
-    # if (response.status_code == 200):
     return response.json()
-    # else:
-        # return {}
 
 def getRepoIssues(owner, repoName):
     url = 'https://api.github.com/repos/%s/%s/issues' %(owner, repoName)
     
     response = requests.get(url, headers={"Authorization":"token " + AUTH_TOKEN})
-    # if (response.status_code == 200):
     return response.json()
-    # else:
-        # return {}
 
 def saveUser(userList, contributors):
     for user in userList:
