@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Glist, User
+from .models import User
 
 def mark_gsoc(modeladmin, request, queryset):
     queryset.update(gsoc=True)
@@ -11,12 +11,8 @@ unmark_gsoc.short_description = "Unmark Selected as GSoC Aspirants"
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['login', 'gsoc']
+    list_filter = ['gsoc']
     search_fields = ['login']
     actions = [mark_gsoc, unmark_gsoc]
 
-class GlistAdmin(admin.ModelAdmin):
-    list_display = ['login']
-    search_fields = ['login']
-
-admin.site.register(Glist, GlistAdmin)
 admin.site.register(User, UserAdmin)
