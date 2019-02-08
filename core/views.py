@@ -1,29 +1,35 @@
 import json
-from django.contrib import messages 
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.core import serializers
 from django.conf import settings
+import datetime
 import requests
 import operator
 from github import Github, GithubException
-from .models import User
+from .models import User, LastUpdate
 
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
+
 
 def github(request):
     username = 'RocketChat'
     url = 'https://api.github.com/orgs/%s/repos' % username
-    response = requests.get(url, headers={'Authorization':'token ' + AUTH_TOKEN})
+    response = requests.get(
+        url, headers={'Authorization': 'token ' + AUTH_TOKEN})
     search_was_successful = (response.status_code == 200)  # 200 = SUCCESS
     search_result = response.json()
-    if search_was_successful:
-        getOrganizationContributors(search_result)
-    if request.META.get('HTTP_REFERER').split('/')[-2] == 'all_list':
-        return HttpResponseRedirect("/all_list/")
-    else:
-        return HttpResponseRedirect("/")
+    if search_was_successful and getOrganizationContributors(search_result):
+        if LastUpdate.objects.filter(pk=1):
+            LastUpdate.objects.filter(pk=1).update(
+                updated=datetime.datetime.now())
+        else:
+            updated = LastUpdate(pk=1, updated=datetime.datetime.now())
+            updated.save()
+    return HttpResponseRedirect("/")
+
 
 def getOrganizationContributors(repoList):
     contributors = {}
@@ -34,48 +40,54 @@ def getOrganizationContributors(repoList):
         contributors = saveUser(userList, contributors)
         contributors = savePRs(pullReq, contributors)
         contributors = saveIssues(issues, contributors)
+    return contributors != {}
+
 
 def getRepoContributors(owner, repoName):
-    url = 'https://api.github.com/repos/%s/%s/stats/contributors' %(owner, repoName)
-    response = requests.get(url, headers={"Authorization":"token " + AUTH_TOKEN})
+    url = 'https://api.github.com/repos/%s/%s/contributors' % (owner, repoName)
+    response = requests.get(
+        url, headers={"Authorization": "token " + AUTH_TOKEN})
     return response.json()
+
 
 def getRepoPR(owner, repoName):
-    url = 'https://api.github.com/repos/%s/%s/pulls' %(owner, repoName)
-    response = requests.get(url, headers={"Authorization":"token " + AUTH_TOKEN})
+    url = 'https://api.github.com/repos/%s/%s/pulls' % (owner, repoName)
+    response = requests.get(
+        url, headers={"Authorization": "token " + AUTH_TOKEN})
     return response.json()
 
+
 def getRepoIssues(owner, repoName):
-    url = 'https://api.github.com/repos/%s/%s/issues' %(owner, repoName)
-    
-    response = requests.get(url, headers={"Authorization":"token " + AUTH_TOKEN})
+    url = 'https://api.github.com/repos/%s/%s/issues' % (owner, repoName)
+
+    response = requests.get(
+        url, headers={"Authorization": "token " + AUTH_TOKEN})
     return response.json()
+
 
 def saveUser(userList, contributors):
     for user in userList:
-        author = user['author']
-        username = author['login']
-        commits = user['total']
-        add, delete = getadddel(user)
+        username = user['login']
+        commits = user['contributions']
         if username in contributors:
             contributors[username]['commits'] += commits
-            contributors[username]['add'] += add
-            contributors[username]['delete'] += delete
             if User.objects.filter(login=username):
-                User.objects.filter(login = username).update(totalCommits = contributors[username]['commits'], totalAdd = contributors[username]['add'], totalDelete = contributors[username]['delete'])
+                User.objects.filter(login=username).update(
+                    totalCommits=contributors[username]['commits'])
         else:
             contributors[username] = {}
             contributors[username]['commits'] = commits
-            contributors[username]['add'] = add
-            contributors[username]['delete'] = delete
             contributors[username]['PR_counts'] = 0
             contributors[username]['issue_counts'] = 0
             if not User.objects.filter(login=username):
-                newUser = User(login = username, avatar = author['avatar_url'], totalCommits = commits, totalAdd = add, totalDelete = delete)
+                newUser = User(
+                    login=username, avatar=user['avatar_url'], totalCommits=commits)
                 newUser.save()
             else:
-                User.objects.filter(login = username).update(totalCommits = contributors[username]['commits'], totalAdd = contributors[username]['add'], totalDelete = contributors[username]['delete'])
+                User.objects.filter(login=username).update(
+                    totalCommits=contributors[username]['commits'])
     return contributors
+
 
 def savePRs(pullReq, contributors_):
     contributors = contributors_
@@ -85,20 +97,22 @@ def savePRs(pullReq, contributors_):
             if username in contributors:
                 contributors[username]['PR_counts'] += 1
                 if User.objects.filter(login=username):
-                    User.objects.filter(login = username).update(totalPRs = contributors[username]['PR_counts'])
+                    User.objects.filter(login=username).update(
+                        totalPRs=contributors[username]['PR_counts'])
             else:
                 contributors[username] = {}
                 contributors[username]['PR_counts'] = 1
                 contributors[username]['issue_counts'] = 0
                 contributors[username]['commits'] = 0
-                contributors[username]['add'] = 0
-                contributors[username]['delete'] = 0
                 if User.objects.filter(login=username):
-                    User.objects.filter(login = username).update(totalPRs = contributors[username]['PR_counts'])
+                    User.objects.filter(login=username).update(
+                        totalPRs=contributors[username]['PR_counts'])
                 else:
-                    newUser = User(login = username, avatar = pull['user']['avatar_url'], totalPRs = contributors[username]['PR_counts'])
+                    newUser = User(
+                        login=username, avatar=pull['user']['avatar_url'], totalPRs=contributors[username]['PR_counts'])
                     newUser.save()
-    return contributors                
+    return contributors
+
 
 def saveIssues(issues, contributors_):
     contributors = contributors_
@@ -108,50 +122,42 @@ def saveIssues(issues, contributors_):
             if username in contributors:
                 contributors[username]['issue_counts'] += 1
                 if User.objects.filter(login=username):
-                    User.objects.filter(login = username).update(totalIssues = contributors[username]['issue_counts'])
+                    User.objects.filter(login=username).update(
+                        totalIssues=contributors[username]['issue_counts'])
             else:
                 contributors[username] = {}
                 contributors[username]['issue_counts'] = 1
                 contributors[username]['PR_counts'] = 0
                 contributors[username]['commits'] = 0
-                contributors[username]['add'] = 0
-                contributors[username]['delete'] = 0
                 if User.objects.filter(login=username):
-                    User.objects.filter(login = username).update(totalIssues = contributors[username]['issue_counts'])
+                    User.objects.filter(login=username).update(
+                        totalIssues=contributors[username]['issue_counts'])
                 else:
-                    newUser = User(login = username, avatar = issue['user']['avatar_url'], totalIssues = contributors[username]['issue_counts'])
+                    newUser = User(
+                        login=username, avatar=issue['user']['avatar_url'], totalIssues=contributors[username]['issue_counts'])
                     newUser.save()
     return contributors
-                   
-
-def getadddel(user):
-    a = 0
-    d = 0
-    for w in user['weeks']:
-        a += w['a']
-        d += w['d']
-    return a,d
 
 
 def showAll(request):
     sort = 'c'
     if 'sort' in request.GET:
         sort = request.GET['sort']
+    lastUpdated = LastUpdate.objects.get(pk=1).updated
     users = sortUser(User.objects.all(), sort)
-    data = serializers.serialize('json', list(users), fields=('login','id', 'avatar', 'totalCommits', 'gsoc', 'totalAdd', 'totalDelete', 'totalPRs', 'totalIssues'))
+    data = serializers.serialize('json', list(users), fields=(
+        'login', 'id', 'avatar', 'totalCommits', 'gsoc', 'totalPRs', 'totalIssues'))
     context = {
         'users': json.loads(data),
+        'updated': lastUpdated,
     }
-    return render(request, 'core/all_list.html', context)    
+    return render(request, 'core/all_list.html', context)
+
 
 def sortUser(User, key):
     if key == 'c':
         return User.order_by('-totalCommits')
-    if key == 'a':
-        return User.order_by('-totalAdd')
-    if key == 'd':
-        return User.order_by('-totalDelete')
     if key == 'p':
         return User.order_by('-totalPRs')
     if key == 'i':
-        return User.order_by('-totalIssues')    
+        return User.order_by('-totalIssues')

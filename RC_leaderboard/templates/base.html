@@ -1,45 +1,44 @@
-{# Load the tag library #}
-{% load bootstrap4 %}
+{# Load the tag library #}{% load bootstrap4 %}{% bootstrap_css %} {% bootstrap_messages %} {% load staticfiles %}
 
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
-
-{# Display django.contrib.messages as Bootstrap alerts #}
-{% bootstrap_messages %}
-
-{# Display a form #}
-<!doctype html>{% load staticfiles %}
+<!doctype html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <title>RocketChat LeaderBoard</title>
-    <style type="text/css">
-      body {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-    </style>
-    <link rel="shortcut icon" href="https://rocket.chat/images/default/logo.svg" type="image/x-icon" />
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
-  </head>
-  <body>
-    <br/><br/>
-    <a href="https://github.com/RocketChat"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
-    <header>
-      <h1 style="margin-bottom: 0">Rocket.Chat Leaderboard</h1>
-      <a href="{% url 'refresh' %}">Refresh</a> |
-      <a href="{% url 'gsoclist' %}">Home</a> |
-      <a href="{% url 'all_list' %}">All User</a> 
-    </header>
-    <hr>
-    {% block content %}
-    {% endblock %}
-    <hr>
-    <footer>
-      <a href="https://rocket.chat">© rocket.chat</a> |
-      <a href="https://github.com/RocketChat">Github(RocketChat)</a>
-    </footer>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Rocket.Chat GSoC PR Dashboard</title>
+  <style type="text/css">
+    body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 100%;
+    }
+  </style>
+  {% block head-css %}
+  <link rel="shortcut icon" href="https://cdn.worldvectorlogo.com/logos/rocket-chat.svg" type="image/x-icon" /> {% endblock %}
+</head>
+
+<body>
+  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href=""><img src="http://www.stickpng.com/assets/images/5848300dcef1014c0b5e4a90.png"
+        height="42" width="42"> Rocket.Chat GSoC PR Dashboard</a>
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="{% url 'refresh' %}">Refresh</a>
+      </li>
+    </ul>
+  </nav>
+  <br><br><br><br>
+  <hr> {% block content %} {% endblock %}
+  <hr>
+  <footer class="footer mt-auto py-3">
+    <div class="container">
+      <span class="text-muted">
+        <a href="https://rocket.chat">© rocket.chat</a> |
+        <a href="https://github.com/RocketChat">Github(RocketChat)</a>
+      </span>
+    </div>
+  </footer>
+</body>
+
 </html>

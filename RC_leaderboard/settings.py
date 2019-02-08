@@ -34,6 +34,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='127.0.0.1,localhost
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.humanize',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -153,5 +154,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Github Auth Token 
-GITHUB_AUTH_TOKEN = config('GITHUB_AUTH_TOKEN', default='YOUR_AUTH_TOKEN')
+GITHUB_AUTH_TOKEN = config('GITHUB_AUTH_TOKEN', default='YOUR_GITHUB_TOKEN')
 
