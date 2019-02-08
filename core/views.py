@@ -9,19 +9,15 @@ import datetime
 import requests
 import operator
 from github import Github, GithubException
-from .models import User, LastUpdate
+from .models import User, LastUpdate, Repository
 
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
 
 
 def github(request):
-    username = 'RocketChat'
-    url = 'https://api.github.com/orgs/%s/repos' % username
-    response = requests.get(
-        url, headers={'Authorization': 'token ' + AUTH_TOKEN})
-    search_was_successful = (response.status_code == 200)  # 200 = SUCCESS
-    search_result = response.json()
-    if search_was_successful and getOrganizationContributors(search_result):
+    org = 'RocketChat'
+    search_result = getOrganizationRepositories(org)
+    if search_result and getOrganizationContributors(search_result):
         if LastUpdate.objects.filter(pk=1):
             LastUpdate.objects.filter(pk=1).update(
                 updated=datetime.datetime.now())
@@ -31,38 +27,80 @@ def github(request):
     return HttpResponseRedirect("/")
 
 
+def getOrganizationRepositories(org, url=''):
+    repositories = []
+    if not url:
+        url = 'https://api.github.com/orgs/%s/repos' % org
+    response = requests.get(
+        url, headers={'Authorization': 'token ' + AUTH_TOKEN})
+    if (response.status_code == 200):  # 200 = SUCCESS
+        repositories = response.json()
+        if 'next' in response.links:
+            repositories += getOrganizationRepositories(
+                org, response.links['next']['url'])
+    return repositories
+
+
 def getOrganizationContributors(repoList):
     contributors = {}
-    for repo in repoList:
-        userList = getRepoContributors(repo['owner']['login'], repo['name'])
-        pullReq = getRepoPR(repo['owner']['login'], repo['name'])
-        issues = getRepoIssues(repo['owner']['login'], repo['name'])
+    for repo_ in repoList:
+        if not Repository.objects.filter(repo=repo_['name']):
+            newRepo = Repository(repo=repo_['name'], owner=repo_['owner']['login'])
+            newRepo.save()
+    repo = Repository.objects.filter(include=True)
+    includedRepo = json.loads(serializers.serialize('json', list(repo), fields=('owner','repo')))
+    for repo_ in includedRepo:
+        owner = repo_['fields']['owner']
+        repoName = repo_['fields']['repo']
+        userList = getRepoContributors(owner, repoName)
+        pullReq = getRepoPR(owner, repoName)
+        issues = getRepoIssues(owner, repoName)
         contributors = saveUser(userList, contributors)
         contributors = savePRs(pullReq, contributors)
         contributors = saveIssues(issues, contributors)
     return contributors != {}
 
 
-def getRepoContributors(owner, repoName):
-    url = 'https://api.github.com/repos/%s/%s/contributors' % (owner, repoName)
+def getRepoContributors(owner, repoName, url=''):
+    contributors = []
+    if not url:
+        url = 'https://api.github.com/repos/%s/%s/contributors' % (
+            owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
-    return response.json()
+    if (response.status_code == 200):  # 200 = SUCCESS
+        contributors = response.json()
+        if 'next' in response.links:
+            contributors += getRepoContributors(owner,
+                                                repoName, response.links['next']['url'])
+    return contributors
 
 
-def getRepoPR(owner, repoName):
-    url = 'https://api.github.com/repos/%s/%s/pulls' % (owner, repoName)
+def getRepoPR(owner, repoName, url=''):
+    pulls = []
+    if not url:
+        url = 'https://api.github.com/repos/%s/%s/pulls' % (owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
-    return response.json()
+    if (response.status_code == 200):  # 200 = SUCCESS
+        pulls = response.json()
+        if 'next' in response.links:
+            pulls += getRepoPR(owner, repoName, response.links['next']['url'])
+    return pulls
 
 
-def getRepoIssues(owner, repoName):
-    url = 'https://api.github.com/repos/%s/%s/issues' % (owner, repoName)
-
+def getRepoIssues(owner, repoName, url=''):
+    issues = []
+    if not url:
+        url = 'https://api.github.com/repos/%s/%s/issues' % (owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
-    return response.json()
+    if (response.status_code == 200):  # 200 = SUCCESS
+        issues = response.json()
+        if 'next' in response.links:
+            issues += getRepoIssues(owner, repoName,
+                                    response.links['next']['url'])
+    return issues
 
 
 def saveUser(userList, contributors):
@@ -143,7 +181,10 @@ def showAll(request):
     sort = 'c'
     if 'sort' in request.GET:
         sort = request.GET['sort']
-    lastUpdated = LastUpdate.objects.get(pk=1).updated
+    if LastUpdate.objects.filter(pk=1):
+        lastUpdated = LastUpdate.objects.get(pk=1).updated
+    else:
+        lastUpdated = ''    
     users = sortUser(User.objects.all(), sort)
     data = serializers.serialize('json', list(users), fields=(
         'login', 'id', 'avatar', 'totalCommits', 'gsoc', 'totalPRs', 'totalIssues'))

@@ -18,3 +18,10 @@ class User(models.Model):
 
 class LastUpdate(models.Model):
     updated = models.DateTimeField(auto_now=True)
+
+class Repository(models.Model):
+    owner = models.TextField(null=False)
+    repo = models.TextField(unique=True, null=False)
+    include = models.BooleanField(default=False)
+
+

@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY', default='ohe6f7-mq-27i7+frr%@b(a^(=(#=p(_%l=#%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='127.0.0.1,localhost')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='127.0.0.1,localhost,laetans.serveo.net')
 
 
 # Application definition
@@ -154,5 +154,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Github Auth Token 
-GITHUB_AUTH_TOKEN = config('GITHUB_AUTH_TOKEN', default='YOUR_GITHUB_TOKEN')
+GITHUB_AUTH_TOKEN = config('GITHUB_AUTH_TOKEN', default='GITHUB_TOKEN')
 
