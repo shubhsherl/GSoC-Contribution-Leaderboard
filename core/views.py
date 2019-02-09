@@ -12,7 +12,7 @@ from github import Github, GithubException
 from .models import User, LastUpdate, Repository
 
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
-
+BASE_URL = settings.BASE_URL
 
 def github(request):
     org = 'RocketChat'
@@ -30,7 +30,7 @@ def github(request):
 def getOrganizationRepositories(org, url=''):
     repositories = []
     if not url:
-        url = 'https://api.github.com/orgs/%s/repos' % org
+        url = BASE_URL + 'orgs/%s/repos' % org
     response = requests.get(
         url, headers={'Authorization': 'token ' + AUTH_TOKEN})
     if (response.status_code == 200):  # 200 = SUCCESS
@@ -64,7 +64,7 @@ def getOrganizationContributors(repoList):
 def getRepoContributors(owner, repoName, url=''):
     contributors = []
     if not url:
-        url = 'https://api.github.com/repos/%s/%s/contributors' % (
+        url = BASE_URL + 'repos/%s/%s/contributors' % (
             owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
@@ -79,7 +79,7 @@ def getRepoContributors(owner, repoName, url=''):
 def getRepoPR(owner, repoName, url=''):
     pulls = []
     if not url:
-        url = 'https://api.github.com/repos/%s/%s/pulls' % (owner, repoName)
+        url = BASE_URL + 'repos/%s/%s/pulls' % (owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):  # 200 = SUCCESS
@@ -92,7 +92,7 @@ def getRepoPR(owner, repoName, url=''):
 def getRepoIssues(owner, repoName, url=''):
     issues = []
     if not url:
-        url = 'https://api.github.com/repos/%s/%s/issues' % (owner, repoName)
+        url = BASE_URL + 'repos/%s/%s/issues' % (owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):  # 200 = SUCCESS
