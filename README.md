@@ -1,7 +1,6 @@
-# RC_leaderboard
+# GSoC Contribution Leaderboard
 
-Rocket.Chat Leaderboard for GSoC candidates. Build using Django Framework in Python3. 
-Register yourself and see your position on leaderboard based on the Commits, Issues and PRs, submitted by you on any repo of Rocket.Chat.
+GSoC Contribution Leaderboard for GSoC candidates. Register yourself and see your position on leaderboard based on the Commits, Issues and PRs, submitted by you on any repo of Rocket.Chat.
 
 Happy Coding.
 
@@ -10,16 +9,16 @@ Happy Coding.
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/shubhsherl/RC_leaderboard.git
+git clone https://github.com/shubhsherl/GSoC-Contribution-Leaderboard.git
 ```
 
 Install the requirements:
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt #build in python3
 ```
 
-Add your Github Auth Token in `RC_leaderboard/setting.py`
+Add your Github Auth Token in `GSoC-Contribution-Leaderboard/setting.py`
 
 *PS: If you have issues installing either `gunicorn` or `psycopg2`, you can remove them from the requirements.txt file and run the command again.*
 

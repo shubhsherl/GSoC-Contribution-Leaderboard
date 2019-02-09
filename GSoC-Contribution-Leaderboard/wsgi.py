@@ -1,5 +1,5 @@
 """
-WSGI config for RC_leaderboard project.
+WSGI config for GSoC-Contribution-Leaderboard project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "RC_leaderboard.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "GSoC-Contribution-Leaderboard.settings")
 
 application = get_wsgi_application()
