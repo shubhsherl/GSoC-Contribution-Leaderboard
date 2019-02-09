@@ -13,10 +13,10 @@ from .models import User, LastUpdate, Repository
 
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
 BASE_URL = settings.BASE_URL
+ORG = settings.ORGANIZATION
 
 def github(request):
-    org = 'RocketChat'
-    search_result = getOrganizationRepositories(org)
+    search_result = getOrganizationRepositories(ORG)
     if search_result and getOrganizationContributors(search_result):
         if LastUpdate.objects.filter(pk=1):
             LastUpdate.objects.filter(pk=1).update(
