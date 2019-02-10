@@ -7,23 +7,70 @@ See your position on leaderboard based on the Commits, Issues and PRs, submitted
 
 Happy Coding.
 
-## Running the Project Locally
+## Features
+- View your Commits/PRs/Issues count.
+- Sort them accordingly.
+- Get all the Contributors List of the Organization.
+- Add Candidate to GSoC leaderboard(w/o any contributions)
+
+#### There are 3 admin levels:
+- **Exclude Repo:** Decide which Repo to count for LeaderBoard
+- **Moderator:** The above plus the ability to kick and ban users
+
+### Feature Requested
+- Add User fragment showing details about user contribution in Organization.
+- Add Codes of Lines Added/Deleted.
+- Show Chart for Commits/Issues/Pull Requests.
+
+## Description of files
+
+Non-Python files:
+
+filename                           |  description
+----------------------------------|------------------------------------------------------------------------------------
+README.md                         |  Text file (markdown format) description of the project.
+requirement.txt                   |  list all packages that needs to be installed for the project.
+\*.html                           |  html file for rendering web-page
+
+Python scripts files:
+
+filename                           |  description
+----------------------------------|------------------------------------------------------------------------------------
+glist.py                          |  Fetch and refresh data of GSoC candidate from the local sqlite3 database.
+model.py                          |  Contains the User and Repository Model for database.
+admin.py                          |  Contains the Admin Model for Administrator dashboard.
+view.py                           |  Fetch and refresh data from the Github database to a local sqlite3 database.
+setting.py                        |  Django file for settings of Project.
+
+
+## Setup 
+
+### Dependencies
+- Python3
+- django
+- dj-database-url
+- gunicorn
+- psycopg
+- requests
+- PyGithub
+- python-decouple
+- django-bootstrap4
+
+### Running the Project Locally
 
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/shubhsherl/RC_leaderboard.git
+git clone https://github.com/shubhsherl/GSoC-Contribution-Leaderboard.git
 ```
 
 Install the requirements:
 
 ```bash
-pip install -r requirements.txt  #build in python3
+pip install -r requirements.txt
 ```
 
-Add your Github Auth Token in `RC_leaderboard/setting.py`
-
-*PS: If you have issues installing either `gunicorn` or `psycopg2`, you can remove them from the requirements.txt file and run the command again.*
+Add your Github Auth Token and Organization name in `RC_leaderboard/setting.py`
 
 Create the database:
 
@@ -37,19 +84,23 @@ Finally, run the development server:
 python manage.py runserver
 ```
 
-## Admin Setup
+### Admin Setup
 
-First, create a super User:
+First, create a superuser:
 
 ```bash
 python manage.py createsuperuser
 ```
 
-Run the project, and open admin({url}/admin) page:
+- Run the project, and Refresh to get the Repo of your Organization.
+- Visit `/admin` and login using the created superuser.
+- Add Repositories to include in Leaderboard.
+- Refresh again to get the contributors of your Organization.
+- Add/Remove user to GSoC list using action in Core>Users.
 
-Login using the created superuser.
+The project will be available at **127.0.0.1:8000** by default.
 
-Add/Remove user to GSoC list using action in Core>Users.
+## Contributing
 
-The project will be available at **127.0.0.1:8000**.
+We appreciate all contributions. If you are planning to contribute bug-fixes, please do so without any further discussion. If you plan to contribute new features, utility functions or extensions, please first open an issue and discuss the feature with us. For more detailed guidelines head over to the official documentation.
 
