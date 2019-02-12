@@ -3,17 +3,17 @@
 
 ![Rocket.Chat GSoC Contributions Leaderboard screenshot](https://github.com/Sing-Li/bbug/blob/master/images/leaderboard.png)
 
-A contribution leaderboard for your GSoC organization. Students can track their position on leaderboard based on the PRs, Commits, and Issues they've completed across the repositories of your organization on Github.
+A contributions leaderboard for your GSoC organization. Students can track their position on leaderboard based on the PRs, commits, and issues they've completed across the repositories of your organization on Github.
 
 ## Benefits
 - Encourage students to improve their position - by increasing contribution to your organization
 - Easy to setup and administer
-- Organization wide visibility to top student candidates
+- Realtime organization-wide visibility to top student candidates
 
 ## Main Features
-- Track Commits/PRs/Issues for GSoC student candidates in real time
+- Track commits/PRs/issues for GSoC student candidates in real time
 - At a glance view of participating top students
-- Easy administration to add students (even before they have their first contribution
+- Easy administration to add students (even before they have made their very first contribution)
 
 ## Quick Start
 
@@ -61,6 +61,7 @@ First, create a superuser:
 ```bash
 python manage.py createsuperuser
 ```
+
 #### Setting up adminsistration
 
 - Run the project, and Refresh to get the Repo of your Organization.
@@ -98,10 +99,10 @@ setting.py                        |  Django file for settings of Project.
 
 ## Contributing
 
-We welcome all contributions for any GSoC orgs, students, or community members. Feel free to contribute bug-fixes at any time.. If you plan to contribute new features, utility functions or extensions, please first create an issue and discuss the feature with us. 
+We welcome all contributions for any GSoC orgs, students, or community members. Feel free to contribute bug-fixes at any time. If you plan to contribute new features, utility functions or extensions, please first create an issue and discuss the feature with us. Please help us to improve our documentation, including this page!
 
-### Some suggested future features to add
-- Add User fragment showing details about user contribution in Organization.
-- Add Codes of Lines Added/Deleted.
-- Show Chart for Commits/Issues/Pull Requests.
+### Some suggested  features to add
+- Show details of contribution when clicked on counts
+- Add `Lines Added/Deleted` stats.
+- Show personalized chart of commits/issues/PRs
 
