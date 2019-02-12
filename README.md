@@ -3,15 +3,17 @@
 
 ![Rocket.Chat GSoC Contributions Leaderboard screenshot](https://github.com/Sing-Li/bbug/blob/master/images/leaderboard.png)
 
-See your position on leaderboard based on the Commits, Issues and PRs, submitted by you across the repositories of Rocket.Chat (or other GSoC organization).
+A contribution leaderboard for your GSoC organization. Students can track their position on leaderboard based on the PRs, Commits, and Issues they've completed across the repositories of your organization on Github.
 
-Happy Coding.
+## Benefits
+- Encourage students to improve their position - by increasing contribution to your organization
+- Easy to setup and administer
+- Organization wide visibility to top student candidates
 
-## Features
-- View your Commits/PRs/Issues count.
-- Sort them accordingly.
-- Get all the Contributors List of the Organization.
-- Add Candidate to GSoC leaderboard(w/o any contributions)
+## Main Features
+- Track Commits/PRs/Issues for GSoC student candidates in real time
+- At a glance view of participating top students
+- Easy administration to add students (even before they have their first contribution
 
 #### There are 3 admin levels:
 - **Exclude Repo:** Decide which Repo to count for LeaderBoard
