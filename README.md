@@ -46,11 +46,17 @@ Apply database migrations
 python manage.py migrate
 ```
 
-Finally, run the development server:
+Finally, run the development server
 
 ```bash
 python manage.py runserver
 ```
+
+To run it in background and serve on any port (eg. 3003)
+```bash
+nohup python manage.py runserver 0.0.0.0:3003 &
+```
+(For production use follow a proper method for deploying a django app in production)
 
 To create an admin user run
 ```bash
