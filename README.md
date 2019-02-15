@@ -17,34 +17,31 @@ A contributions leaderboard for your GSoC organization. Students can track their
 
 ## Quick Start
 
-Make sure you have the following linux dependencies installed:
 
-- Python3
-- django
-- dj-database-url
-- gunicorn
-- psycopg
-- requests
-- PyGithub
-- python-decouple
-- django-bootstrap4
 
-Then, clone the repository to your local machine:
+Clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/shubhsherl/GSoC-Contribution-Leaderboard.git
 ```
 
-Install the requirements:
-
-```bash
+Create a `python3` virtual environment, activate it and install the required packages
+```
+bash
+virtualenv venv -p python3
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Add your Github Auth Token and Organization name in `RC_leaderboard/setting.py`
+Create a file name `.env` in the base directory (alongside manage.py) and
+Add your Github Auth Token and Organization name in it as following
 
-Create the database:
+```
+ORGANIZATION=''
+GITHUB_AUTH_TOKEN=''
+```
 
+Apply database migrations
 ```bash
 python manage.py migrate
 ```
@@ -55,26 +52,22 @@ Finally, run the development server:
 python manage.py runserver
 ```
 
-
-First, create a superuser:
-
+To create an admin user run
 ```bash
 python manage.py createsuperuser
 ```
 
-#### Setting up adminsistration
+#### First steps
 
-- Run the project, and Refresh to get the Repo of your Organization.
-- Visit `/admin` and login using the created superuser.
-- Add Repositories to include in Leaderboard.
-- Refresh again to get the contributors of your Organization.
-- Add/Remove user to GSoC list using action in Core>Users.
-
-The project will be available at **127.0.0.1:8000** by default.
+- Click on refresh at the home page to sync your db with the latest repositories from your Organization.
+- Visit `/admin`, mark the Repositories from which you want to count contributions.
+- Hit refresh again at the home page to populate the contributors.
+- Mark users as GSoC contributors under Core>Users form the admin panel.
+- Refresh to update their stats in the leaderboard.
 
 ##### Admin levels:
 - **Exclude Repo:** Decide which Repo to count for LeaderBoard
-- **Moderator:** The above plus the ability to kick and ban users
+- **Moderator:** The above plus the ability to add/remove users
 
 ## Description of files in Repository
 
