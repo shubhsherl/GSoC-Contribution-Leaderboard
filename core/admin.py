@@ -61,7 +61,7 @@ class LastUpdatedAdmin(admin.ModelAdmin):
 
 
 class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ['owner', 'repo', 'include']
+    list_display = ['repo', 'owner', 'include']
     readonly_fields = ['owner', 'repo']
     list_filter = ['include']
     search_fields = ['owner', 'repo']
