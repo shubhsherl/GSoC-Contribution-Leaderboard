@@ -93,7 +93,7 @@ filename                           |  description
 glist.py                          |  Fetch and refresh data of GSoC candidate from the local sqlite3 database.
 model.py                          |  Contains the User and Repository Model for database.
 admin.py                          |  Contains the Admin Model for Administrator dashboard.
-view.py                           |  Fetch and refresh data from the Github database to a local sqlite3 database.
+view.py                           |  Fetch data from the Github database to a local sqlite3 database.
 setting.py                        |  Django file for settings of Project.
 
 
