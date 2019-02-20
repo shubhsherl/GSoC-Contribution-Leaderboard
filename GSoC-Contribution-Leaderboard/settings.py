@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'bootstrap4',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -57,6 +58,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CRONJOBS = [
+    ('*/10 * * * *', 'core.cron.refresh_page')
 ]
 
 ROOT_URLCONF = 'GSoC-Contribution-Leaderboard.urls'
