@@ -24,13 +24,13 @@ def github():
         else:
             updated = LastUpdate(pk=1, updated=datetime.datetime.now())
             updated.save()
-    return HttpResponseRedirect("/")
+    return
 
 
 def getOrganizationRepositories(org, url=''):
     repositories = []
     if not url:
-        url = BASE_URL + 'orgs/%s/repos' % org
+        url = BASE_URL + 'orgs/%s/repos?per_page=100' % org
     response = requests.get(
         url, headers={'Authorization': 'token ' + AUTH_TOKEN})
     if (response.status_code == 200):  # 200 = SUCCESS
@@ -45,7 +45,7 @@ def getOrganizationContributors(repoList):
     contributors = {}
     for repo_ in repoList:
         if not Repository.objects.filter(repo=repo_['name']):
-            newRepo = Repository(repo=repo_['name'], owner=repo_['owner']['login'])
+            newRepo = Repository(repo=repo_['name'], owner=repo_['owner']['login'], include=True)
             newRepo.save()
     repo = Repository.objects.filter(include=True)
     includedRepo = json.loads(serializers.serialize('json', list(repo), fields=('owner','repo')))
@@ -64,7 +64,7 @@ def getOrganizationContributors(repoList):
 def getRepoContributors(owner, repoName, url=''):
     contributors = []
     if not url:
-        url = BASE_URL + 'repos/%s/%s/contributors' % (
+        url = BASE_URL + 'repos/%s/%s/contributors?per_page=100' % (
             owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
@@ -79,7 +79,7 @@ def getRepoContributors(owner, repoName, url=''):
 def getRepoPR(owner, repoName, url=''):
     pulls = []
     if not url:
-        url = BASE_URL + 'repos/%s/%s/pulls' % (owner, repoName)
+        url = BASE_URL + 'repos/%s/%s/pulls?per_page=100' % (owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):  # 200 = SUCCESS
@@ -92,7 +92,7 @@ def getRepoPR(owner, repoName, url=''):
 def getRepoIssues(owner, repoName, url=''):
     issues = []
     if not url:
-        url = BASE_URL + 'repos/%s/%s/issues' % (owner, repoName)
+        url = BASE_URL + 'repos/%s/%s/issues?per_page=100' % (owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):  # 200 = SUCCESS
