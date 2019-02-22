@@ -17,8 +17,6 @@ A contributions leaderboard for your GSoC organization. Students can track their
 
 ## Quick Start
 
-
-
 Clone the repository to your local machine:
 
 ```bash
@@ -62,14 +60,20 @@ To create an admin user run
 ```bash
 python manage.py createsuperuser
 ```
+###  Architecture
 
-#### First steps
+TODO: describe how django front end works briefly, and describe how the backend cron job works.
+      make sure user realize that they must admin and manage an additional separate Linux cron job!
+
+###  Starting the cron job
+
+TODO:  add details on cron job here
+
+#### Initiailization:  First steps
 
 - Click on refresh at the home page to sync your db with the latest repositories from your Organization.
 - Visit `/admin`, mark the Repositories from which you want to count contributions.
-- Hit refresh again at the home page to populate the contributors.
 - Mark users as GSoC contributors under Core>Users form the admin panel.
-- Refresh to update their stats in the leaderboard.
 
 ##### Admin levels:
 - **Exclude Repo:** Decide which Repo to count for LeaderBoard
