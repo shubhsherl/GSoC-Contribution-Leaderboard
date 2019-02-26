@@ -61,14 +61,16 @@ To create an admin user run
 python manage.py createsuperuser
 ```
 
-Start the refresh cron job
+Start the refresh script
 
 ###  Architecture
 
-TODO: describe how django front end works briefly, and describe how the backend cron job works.
-      make sure user realize that they must admin and manage an additional separate Linux cron job!
+- The refresh script fetches contributions of users marked as GSoC candidates to selected repositories.
+- By default all the repositories are used for counting contributions and no user is marked as GSoC candidate.
+- A superuser/admin must mark the users as GSoC candidates, and can choose to not use certain repositories for counting contributions.
+- Both the django application and the refresh script run on seperate threads.
 
-###  Starting the refresh cron job
+###  Running the refresh script
 
 `nohup sh refresh.sh &`
 
