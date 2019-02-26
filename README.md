@@ -60,14 +60,17 @@ To create an admin user run
 ```bash
 python manage.py createsuperuser
 ```
+
+Start the refresh cron job
+
 ###  Architecture
 
 TODO: describe how django front end works briefly, and describe how the backend cron job works.
       make sure user realize that they must admin and manage an additional separate Linux cron job!
 
-###  Starting the cron job
+###  Starting the refresh cron job
 
-TODO:  add details on cron job here
+`nohup sh refresh.sh &`
 
 #### Initiailization:  First steps
 
