@@ -17,7 +17,7 @@ from decouple import config, Csv
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_URL = config('BASE_URL', default='https://api.github.com/')
+API_BASE_URL = config('BASE_URL', default='https://api.github.com/')
 
 ORGANIZATION = config('ORGANIZATION', default='RocketChat')
 

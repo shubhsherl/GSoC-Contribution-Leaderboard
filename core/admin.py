@@ -6,7 +6,7 @@ import json
 
 
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
-BASE_URL = settings.BASE_URL
+BASE_URL = settings.API_BASE_URL
 
 
 def mark_gsoc(modeladmin, request, queryset):
@@ -46,6 +46,7 @@ class UserAdmin(admin.ModelAdmin):
     actions = [mark_gsoc, unmark_gsoc]
 
     def save_model(self, request, obj, form, change):
+        obj.login = obj.login.lower()
         url = BASE_URL + 'users/%s' % obj.login
         response = requests.get(
             url, headers={"Authorization": "token " + AUTH_TOKEN})

@@ -12,7 +12,7 @@ from github import Github, GithubException
 from .models import User, LastUpdate, Repository
 
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
-BASE_URL = settings.BASE_URL
+BASE_URL = settings.API_BASE_URL
 ORG = settings.ORGANIZATION
 
 def github():
@@ -105,7 +105,7 @@ def getRepoIssues(owner, repoName, url=''):
 
 def saveUser(userList, contributors):
     for user in userList:
-        username = user['login']
+        username = user['login'].lower()
         commits = user['contributions']
         if username in contributors:
             contributors[username]['commits'] += commits
@@ -131,7 +131,7 @@ def savePRs(pullReq, contributors_):
     contributors = contributors_
     for pull in pullReq:
         if 'open' == pull['state']:
-            username = pull['user']['login']
+            username = pull['user']['login'].lower()
             if username in contributors:
                 contributors[username]['PR_counts'] += 1
                 if User.objects.filter(login=username):
@@ -156,7 +156,7 @@ def saveIssues(issues, contributors_):
     contributors = contributors_
     for issue in issues:
         if True:
-            username = issue['user']['login']
+            username = issue['user']['login'].lower()
             if username in contributors:
                 contributors[username]['issue_counts'] += 1
                 if User.objects.filter(login=username):
