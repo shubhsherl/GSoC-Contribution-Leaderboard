@@ -7,14 +7,14 @@ from .views import sortUser
 
 
 def showGsocUser(request):
-    sort = 'c'
+    sort = 'd'
     if 'sort' in request.GET:
         sort = request.GET['sort']
     if LastUpdate.objects.filter(pk=1):
         lastUpdated = LastUpdate.objects.get(pk=1).updated
     else:
         lastUpdated = ''
-    users = sortUser(User.objects.filter(gsoc=True), sort)
+    users = sortUser(User.objects.filter(gsoc=True), sort, _gsoc = True)
     data = serializers.serialize('json', list(users), fields=(
         'login', 'id', 'avatar', 'totalCommits', 'gsoc', 'totalPRs', 'totalIssues'))
     context = {

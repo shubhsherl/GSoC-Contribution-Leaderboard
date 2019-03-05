@@ -178,14 +178,15 @@ def saveIssues(issues, contributors_):
 
 
 def showAll(request):
-    sort = 'c'
+    sort = 'd'
     if 'sort' in request.GET:
         sort = request.GET['sort']
     if LastUpdate.objects.filter(pk=1):
         lastUpdated = LastUpdate.objects.get(pk=1).updated
     else:
-        lastUpdated = ''    
+        lastUpdated = ''
     users = sortUser(User.objects.all(), sort)
+
     data = serializers.serialize('json', list(users), fields=(
         'login', 'id', 'avatar', 'totalCommits', 'gsoc', 'totalPRs', 'totalIssues'))
     context = {
@@ -195,10 +196,20 @@ def showAll(request):
     return render(request, 'core/all_list.html', context)
 
 
-def sortUser(User, key):
+def sortUser(_User, key, _gsoc = False):
     if key == 'c':
-        return User.order_by('-totalCommits')
+        return _User.order_by('-totalCommits')
     if key == 'p':
-        return User.order_by('-totalPRs')
+        return _User.order_by('-totalPRs')
     if key == 'i':
-        return User.order_by('-totalIssues')
+        return _User.order_by('-totalIssues')
+    if _gsoc: #defalut case for gsoc
+        return User.objects.filter(gsoc=_gsoc).extra(
+        select={'count':'totalCommits + totalPRs + totalIssues'},
+        order_by=('-count',),
+        )
+    else: #default case for all
+        return User.objects.extra(
+        select={'count':'totalCommits + totalPRs + totalIssues'},
+        order_by=('-count',),
+        )
