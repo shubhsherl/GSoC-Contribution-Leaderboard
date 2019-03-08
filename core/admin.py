@@ -40,7 +40,7 @@ remove_repo.short_description = "Remove Repository"
 class UserAdmin(admin.ModelAdmin):
     list_display = ['login', 'gsoc']
     readonly_fields = ['avatar',
-                       'totalCommits', 'totalPRs', 'totalIssues']
+                        'totalOpenPRs', 'totalMergedPRs', 'totalIssues']
     list_filter = ['gsoc']
     search_fields = ['login']
     actions = [mark_gsoc, unmark_gsoc]
@@ -57,8 +57,8 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class LastUpdatedAdmin(admin.ModelAdmin):
-    list_display = ['updated']
-    readonly_fields = ['updated']
+    list_display = ['gList', 'allList']
+    readonly_fields = ['gList', 'allList']
 
 
 class RepositoryAdmin(admin.ModelAdmin):
