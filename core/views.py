@@ -11,10 +11,11 @@ import operator
 from github import Github, GithubException
 from .models import User, LastUpdate, Repository
 
-
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
 BASE_URL = settings.API_BASE_URL
 ORG = settings.ORGANIZATION
+NUM = 0
+
 
 def github():
     search_result = getOrganizationRepositories(ORG)
@@ -44,54 +45,56 @@ def getOrganizationRepositories(org, url=''):
 
 def getOrganizationContributors(repoList):
     contributors = {}
+    issueRepos = []
     for repo_ in repoList:
-        if not Repository.objects.filter(repo=repo_['name']):
-            newRepo = Repository(repo=repo_['name'], owner=repo_['owner']['login'], include=False)
+        currRepo = Repository.objects.filter(repo=repo_['name'])
+        if not currRepo:
+            newRepo = Repository(repo=repo_['name'], owner=repo_['owner']['login'], openIssues=repo_['open_issues'],
+                                 include=True)
             newRepo.save()
+        else:
+            if currRepo[0].openIssues != repo_['open_issues'] and currRepo[0].include:
+                currRepo.update(openIssues=repo_['open_issues'])
+                issueRepos += currRepo
 
-    repo = Repository.objects.filter(include=True)
-    includedRepo = json.loads(serializers.serialize('json', list(repo), fields=('owner','repo')))
-
-
-    for repo_ in includedRepo:
+    forIssues = json.loads(serializers.serialize('json', list(issueRepos), fields=('owner', 'repo')))
+    for repo_ in forIssues:
         owner = repo_['fields']['owner']
         repoName = repo_['fields']['repo']
         contributors = getRepoIssues(owner, repoName, contributors)
-        contributors = getRepoContributors(owner, repoName, contributors)
         contributors = getRepoPR(owner, repoName, contributors)
+        contributors = getRepoContributors(owner, repoName, contributors)
 
     updateDataBase(contributors)
 
-        # contributors = saveUser(userList, contributors)
-        # contributors = savePRs(pullReq, contributors)
-        # contributors = saveIssues(issues, contributors)
+    # contributors = saveUser(userList, contributors)
+    # contributors = savePRs(pullReq, contributors)
+    # contributors = saveIssues(issues, contributors)
 
     return contributors != {}
 
+
 def updateDataBase(contributors):
     for user in contributors:
-        currUser=User.objects.filter(login=user)
+        currUser = User.objects.filter(login=user)
         if currUser:
             currUser.update(
                 totalPRs=contributors[user]['PR_counts'],
                 totalCommits=contributors[user]['commits'],
-                totalIssues =contributors[user]['issue_counts']
-                            )
+                totalIssues=contributors[user]['issue_counts']
+            )
         else:
             newUser = User(
-                            login=user,
-                            avatar=contributors[user]['avatar_url'],
-                            totalPRs=contributors[user]['PR_counts'],
-                            totalCommits=contributors[user]['commits'],
-                            totalIssues=contributors[user]['issue_counts']
-                            )
+                login=user,
+                avatar=contributors[user]['avatar_url'],
+                totalPRs=contributors[user]['PR_counts'],
+                totalCommits=contributors[user]['commits'],
+                totalIssues=contributors[user]['issue_counts']
+            )
             newUser.save()
 
 
-
-
-
-def getRepoContributors(owner, repoName,contributors_, url=''):
+def getRepoContributors(owner, repoName, contributors_, url=''):
     contributors = contributors_
     if not url:
         url = BASE_URL + 'repos/%s/%s/contributors?per_page=100' % (
@@ -103,9 +106,9 @@ def getRepoContributors(owner, repoName,contributors_, url=''):
         saveUser(users, contributors)
         if 'next' in response.links:
             contributors = getRepoContributors(owner,
-                                                repoName,
-                                                contributors_,
-                                                response.links['next']['url'])
+                                               repoName,
+                                               contributors_,
+                                               response.links['next']['url'])
     return contributors
 
 
@@ -119,7 +122,7 @@ def getRepoPR(owner, repoName, contributors_, url=''):
         pulls = response.json()
         savePRs(pulls, contributors)
         if 'next' in response.links:
-            contributors = getRepoPR(owner, repoName,contributors, response.links['next']['url'])
+            contributors = getRepoPR(owner, repoName, contributors, response.links['next']['url'])
     return contributors
 
 
@@ -176,15 +179,15 @@ def savePRs(pullReq, contributors_):
 def saveIssues(issues, contributors_):
     contributors = contributors_
     for issue in issues:
-            username = issue['user']['login'].lower()
-            if username in contributors:
-                contributors[username]['issue_counts'] += 1
-            else:
-                contributors[username] = {}
-                contributors[username]['issue_counts'] = 1
-                contributors[username]['PR_counts'] = 0
-                contributors[username]['commits'] = 0
-                contributors[username]['avatar_url'] = issue['user']['avatar_url']
+        username = issue['user']['login'].lower()
+        if username in contributors:
+            contributors[username]['issue_counts'] += 1
+        else:
+            contributors[username] = {}
+            contributors[username]['issue_counts'] = 1
+            contributors[username]['PR_counts'] = 0
+            contributors[username]['commits'] = 0
+            contributors[username]['avatar_url'] = issue['user']['avatar_url']
 
     return contributors
 
@@ -208,20 +211,20 @@ def showAll(request):
     return render(request, 'core/all_list.html', context)
 
 
-def sortUser(_User, key, _gsoc = False):
+def sortUser(_User, key, _gsoc=False):
     if key == 'c':
         return _User.order_by('-totalCommits')
     if key == 'p':
         return _User.order_by('-totalPRs')
     if key == 'i':
         return _User.order_by('-totalIssues')
-    if _gsoc: #defalut case for gsoc
+    if _gsoc:  # defalut case for gsoc
         return User.objects.filter(gsoc=_gsoc).extra(
-        select={'count':'totalCommits + totalPRs + totalIssues'},
-        order_by=('-count',),
+            select={'count': 'totalCommits + totalPRs + totalIssues'},
+            order_by=('-count',),
         )
-    else: #default case for all
+    else:  # default case for all
         return User.objects.extra(
-        select={'count':'totalCommits + totalPRs + totalIssues'},
-        order_by=('-count',),
+            select={'count': 'totalCommits + totalPRs + totalIssues'},
+            order_by=('-count',),
         )

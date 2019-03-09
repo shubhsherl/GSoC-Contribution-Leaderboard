@@ -23,5 +23,5 @@ class Repository(models.Model):
     owner = models.TextField(null=False)
     repo = models.TextField(unique=True, null=False)
     include = models.BooleanField(default=False)
-
+    openIssues= models.IntegerField(default=0)
 
