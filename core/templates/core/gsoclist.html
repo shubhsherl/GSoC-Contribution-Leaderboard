@@ -19,19 +19,19 @@
   </tr>
   {% for user in users %}
   <tr>
-    <td><img src="{{user.fields.avatar}}" height="42" width="42"></td>
+    <td><img src="{{user.user__avatar}}" height="42" width="42"></td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      <a href="https://www.github.com/{{user.fields.login}}">{{ user.fields.login }}</a>
+      <a href="https://www.github.com/{{user.fields.login}}">{{ user.user__login }}</a>
     </td>
     <td></td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      {{ user.fields.totalPRs }}
+      {{ user.totalPRs__sum }}
     </td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      {{ user.fields.totalCommits }}
+      {{ user.totalCommits__sum }}
     </td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      {{ user.fields.totalIssues }}
+      {{ user.totalIssues__sum }}
     </td>
   </tr>
   {% endfor %}

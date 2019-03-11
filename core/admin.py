@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, LastUpdate, Repository
+from .models import User, LastUpdate, Repository, Relation
 from django.conf import settings
 import requests
 import json
@@ -40,7 +40,7 @@ remove_repo.short_description = "Remove Repository"
 class UserAdmin(admin.ModelAdmin):
     list_display = ['login', 'gsoc']
     readonly_fields = ['avatar',
-                       'totalCommits', 'totalPRs', 'totalIssues']
+                       ]
     list_filter = ['gsoc']
     search_fields = ['login']
     actions = [mark_gsoc, unmark_gsoc]
@@ -57,8 +57,9 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class LastUpdatedAdmin(admin.ModelAdmin):
-    list_display = ['updated']
+    list_display = ['updated','pk']
     readonly_fields = ['updated']
+
 
 
 class RepositoryAdmin(admin.ModelAdmin):
@@ -68,7 +69,12 @@ class RepositoryAdmin(admin.ModelAdmin):
     search_fields = ['owner', 'repo']
     actions = [include_repo, remove_repo]
 
+class RelationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'repo']
+    readonly_fields = ['totalCommits', 'totalPRs','totalIssues']
+    search_fields = ['user__login']
 
 admin.site.register(User, UserAdmin)
 admin.site.register(LastUpdate, LastUpdatedAdmin)
 admin.site.register(Repository, RepositoryAdmin)
+admin.site.register(Relation,RelationAdmin)

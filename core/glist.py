@@ -1,9 +1,9 @@
-import json
-from django.http import HttpResponseRedirect
+
 from django.shortcuts import render
-from django.core import serializers
-from .models import User, LastUpdate
+from .models import  LastUpdate, Relation
 from .views import sortUser
+
+
 
 
 def showGsocUser(request):
@@ -14,11 +14,10 @@ def showGsocUser(request):
         lastUpdated = LastUpdate.objects.get(pk=1).updated
     else:
         lastUpdated = ''
-    users = sortUser(User.objects.filter(gsoc=True), sort, _gsoc = True)
-    data = serializers.serialize('json', list(users), fields=(
-        'login', 'id', 'avatar', 'totalCommits', 'gsoc', 'totalPRs', 'totalIssues'))
+    data = sortUser(Relation.objects, sort, _gsoc = True)
+
     context = {
-        'users': json.loads(data),
+        'users': data,
         'updated': lastUpdated,
     }
     return render(request, 'core/gsoclist.html', context)
