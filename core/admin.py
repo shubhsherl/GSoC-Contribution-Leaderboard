@@ -1,10 +1,10 @@
-from django.contrib import admin
-from .models import User, LastUpdate, Repository
+from django.contrib import admin,messages
+from .models import User, LastUpdate
 from django.conf import settings
 import requests
 import json
 
-
+ORG = settings.ORGANIZATION
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
 BASE_URL = settings.API_BASE_URL
 
@@ -47,12 +47,33 @@ class UserAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.login = obj.login.lower()
+        # Avatar
         url = BASE_URL + 'users/%s' % obj.login
         response = requests.get(
             url, headers={"Authorization": "token " + AUTH_TOKEN})
         if (response.status_code == 200):
-            print(response.json())
             obj.avatar = response.json()['avatar_url']
+        elif (response.status_code == 404):
+            messages.error(request, 'Invalid User')
+            return False
+        # Merged PRs
+        url = url = BASE_URL + 'search/issues?q=org:%s+author:%s+archived:false+is:merged+is:pr' % (ORG, obj.login)
+        response = requests.get(
+            url, headers={"Authorization": "token " + AUTH_TOKEN})
+        if (response.status_code == 200):
+            obj.totalMergedPRs = response.json()['total_count']  
+        # Issues           
+        url = BASE_URL + 'search/issues?q=org:%s+author:%s+archived:false+is:issue' % (ORG, obj.login)
+        response = requests.get(
+            url, headers={"Authorization": "token " + AUTH_TOKEN})
+        if (response.status_code == 200):
+            obj.totalIssues = response.json()['total_count']
+        # Open PRs
+        url = BASE_URL + 'search/issues?q=org:%s+author:%s+archived:false+is:open+is:pr' % (ORG, obj.login)         
+        response = requests.get(
+            url, headers={"Authorization": "token " + AUTH_TOKEN})
+        if (response.status_code == 200):
+            obj.totalOpenPRs = response.json()['total_count']
         super().save_model(request, obj, form, change)
 
 
@@ -61,14 +82,5 @@ class LastUpdatedAdmin(admin.ModelAdmin):
     readonly_fields = ['gList', 'allList']
 
 
-class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ['repo', 'owner', 'include']
-    readonly_fields = ['owner', 'repo']
-    list_filter = ['include']
-    search_fields = ['owner', 'repo']
-    actions = [include_repo, remove_repo]
-
-
 admin.site.register(User, UserAdmin)
 admin.site.register(LastUpdate, LastUpdatedAdmin)
-admin.site.register(Repository, RepositoryAdmin)

@@ -4,5 +4,4 @@ from . import views, glist
 
 urlpatterns = [
     path('', glist.showGsocUser, name='gsoclist'),
-    path('all_list/', views.showAll, name='all_list'),
 ]

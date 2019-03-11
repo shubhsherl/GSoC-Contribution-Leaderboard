@@ -3,7 +3,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core import serializers
 from .models import User, LastUpdate
-from .views import sortUser
 
 
 def showGsocUser(request):
@@ -14,7 +13,7 @@ def showGsocUser(request):
         lastUpdated = LastUpdate.objects.get(pk=1).gList
     else:
         lastUpdated = ''
-    users = sortUser(User.objects.filter(gsoc=True), sort, _gsoc = True)
+    users = sortUser(User.objects.filter(gsoc=True), sort)
     data = serializers.serialize('json', list(users), fields=(
         'login', 'id', 'avatar', 'gsoc', 'totalOpenPRs', 'totalMergedPRs', 'totalIssues'))
     context = {
@@ -22,3 +21,16 @@ def showGsocUser(request):
         'updated': lastUpdated,
     }
     return render(request, 'core/gsoclist.html', context)
+
+def sortUser(_User, key):
+    if key == 'm':
+        return _User.order_by('-totalMergedPRs')
+    elif key == 'p':
+        return _User.order_by('-totalOpenPRs')
+    elif key == 'i':
+        return _User.order_by('-totalIssues')
+    else: # defalut case for gsoc
+        return User.objects.filter(gsoc=True).extra(
+        select={'count':'totalMergedPRs + totalOpenPRs'},
+        order_by=('-count',),
+        )
