@@ -205,11 +205,11 @@ def sortUser(_User, key, _gsoc = False):
         return _User.order_by('-totalIssues')
     if _gsoc: #defalut case for gsoc
         return User.objects.filter(gsoc=_gsoc).extra(
-        select={'count':'totalCommits + totalPRs + totalIssues'},
+        select={'count':'totalCommits + totalPRs'},
         order_by=('-count',),
         )
     else: #default case for all
         return User.objects.extra(
-        select={'count':'totalCommits + totalPRs + totalIssues'},
+        select={'count':'totalCommits + totalPRs'},
         order_by=('-count',),
         )
