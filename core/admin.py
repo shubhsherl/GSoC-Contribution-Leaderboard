@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import User, LastUpdate, Repository, Relation
 from django.conf import settings
 import requests
-import json
+
 
 
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
@@ -23,24 +23,23 @@ def unmark_gsoc(modeladmin, request, queryset):
 unmark_gsoc.short_description = "Unmark as GSoC Candidate"
 
 
-def include_repo(modeladmin, request, queryset):
-    queryset.update(include=True)
+def mark_repo_gsoc(modeladmin, request, queryset):
+    queryset.update(gsoc=True)
 
 
-include_repo.short_description = "Include Repository"
+mark_repo_gsoc.short_description = "Add as gsoc"
 
 
-def remove_repo(modeladmin, request, queryset):
-    queryset.update(include=False)
+def remove_repo_gsoc(modeladmin, request, queryset):
+    queryset.update(gsoc=False)
 
 
-remove_repo.short_description = "Remove Repository"
+remove_repo_gsoc.short_description = "Remove Repository from gsoc"
 
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['login', 'gsoc']
-    readonly_fields = ['avatar',
-                       ]
+    readonly_fields = ['avatar']
     list_filter = ['gsoc']
     search_fields = ['login']
     actions = [mark_gsoc, unmark_gsoc]
@@ -50,29 +49,31 @@ class UserAdmin(admin.ModelAdmin):
         url = BASE_URL + 'users/%s' % obj.login
         response = requests.get(
             url, headers={"Authorization": "token " + AUTH_TOKEN})
-        if (response.status_code == 200):
-            print(response.json())
+        if response.status_code == 200:
             obj.avatar = response.json()['avatar_url']
         super().save_model(request, obj, form, change)
+        base_repo, created = Repository.objects.get_or_create(repo='base_repo_1254879', defaults={'gsoc': True})
+        Relation.objects.get_or_create(repo=base_repo, user=obj)
 
 
 class LastUpdatedAdmin(admin.ModelAdmin):
-    list_display = ['updated','pk']
+    list_display = ['updated', 'pk']
     readonly_fields = ['updated']
 
 
-
 class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ['repo', 'owner', 'include','openIssues']
+    list_display = ['repo', 'owner', 'gsoc','openIssues']
     readonly_fields = ['owner', 'repo']
-    list_filter = ['include']
+    list_filter = ['gsoc']
     search_fields = ['owner', 'repo']
-    actions = [include_repo, remove_repo]
+    actions = [mark_repo_gsoc, remove_repo_gsoc]
+
 
 class RelationAdmin(admin.ModelAdmin):
     list_display = ['user', 'repo']
-    readonly_fields = ['totalCommits', 'totalPRs','totalIssues']
+    readonly_fields = ['totalMergedPRs', 'totalOpenPRs', 'totalIssues']
     search_fields = ['user__login']
+
 
 admin.site.register(User, UserAdmin)
 admin.site.register(LastUpdate, LastUpdatedAdmin)
