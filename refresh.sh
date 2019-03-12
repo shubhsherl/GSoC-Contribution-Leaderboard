@@ -2,5 +2,5 @@
 while true  
 do
 python3 ./manage.py refresh
-sleep 600
+sleep 1800
 done
