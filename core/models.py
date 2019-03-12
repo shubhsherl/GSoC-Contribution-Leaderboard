@@ -9,8 +9,5 @@ class User(models.Model):
     totalIssues = models.IntegerField(default=0)
     gsoc = models.BooleanField(default=False)
 
-
 class LastUpdate(models.Model):
-    gList = models.DateTimeField(auto_now=True)
-    allList = models.DateTimeField(auto_now=True)
-
+    update = models.DateTimeField(auto_now=True)

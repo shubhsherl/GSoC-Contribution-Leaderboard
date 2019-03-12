@@ -13,21 +13,18 @@ ORG = settings.ORGANIZATION
 
 
 def github():
-    success = False
-    user = User.objects.filter(gsoc=True)
-    gsoclist = json.loads(serializers.serialize(
-        'json', list(user), fields=('login')))
-    for user in gsoclist:
-        username = user['fields']['login']
-        success = getOpenPRs(username) and getMergedPRs(
-            username) and getIssues(username)
-    if success:
-        if LastUpdate.objects.filter(pk=1):
-            LastUpdate.objects.filter(pk=1).update(
-                gList=datetime.datetime.now())
-        else:
-            updated = LastUpdate(pk=1, gList=datetime.datetime.now())
-            updated.save()
+    users = User.objects.filter(gsoc=True)
+    for user in users:
+        user.totalOpenPRs=getOpenPRs(user.login)
+        user.totalMergedPRs=getMergedPRs(user.login)
+        user.totalIssues=getIssues(user.login)
+        user.save()
+    updated = LastUpdate.objects.filter(pk=1)
+    if updated:
+        updated.update(update=datetime.datetime.now())
+    else:
+        updated = LastUpdate(pk=1, update=datetime.datetime.now())
+        updated.save()
 
 
 def getMergedPRs(username):
@@ -38,14 +35,11 @@ def getMergedPRs(username):
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):  # success
-        mergedPRs = response.json()['total_count']
-        user = User.objects.filter(login=username)
-        if user:
-            user.update(totalMergedPRs=mergedPRs)
+        return response.json()['total_count']
     elif (response.status_code == 403):  # rate-limit exceeded wait for 30sec
         time.sleep(30)
-        getMergedPRs(username)
-    return mergedPRs != -1
+        return getMergedPRs(username)
+    return mergedPRs
 
 
 def getIssues(username):
@@ -56,14 +50,11 @@ def getIssues(username):
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):
-        issues = response.json()['total_count']
-        user = User.objects.filter(login=username)
-        if user:
-            user.update(totalIssues=issues)
+        return response.json()['total_count']
     elif (response.status_code == 403):
         time.sleep(30)
-        getIssues(username)
-    return issues != -1
+        return getIssues(username)
+    return issues
 
 
 def getOpenPRs(username):
@@ -74,11 +65,8 @@ def getOpenPRs(username):
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):
-        openPRs = response.json()['total_count']
-        user = User.objects.filter(login=username)
-        if user:
-            user.update(totalOpenPRs=openPRs)
+        return response.json()['total_count']
     elif (response.status_code == 403):
         time.sleep(30)
-        getOpenPRs(username)
-    return openPRs != -1
+        return getOpenPRs(username)
+    return openPRs

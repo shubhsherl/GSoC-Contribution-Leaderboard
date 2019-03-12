@@ -9,8 +9,9 @@ def showGsocUser(request):
     sort = 'd'
     if 'sort' in request.GET:
         sort = request.GET['sort']
-    if LastUpdate.objects.filter(pk=1):
-        lastUpdated = LastUpdate.objects.get(pk=1).gList
+    updated = LastUpdate.objects.filter(pk=1)
+    if updated:
+        lastUpdated = updated.update
     else:
         lastUpdated = ''
     users = sortUser(User.objects.filter(gsoc=True), sort)

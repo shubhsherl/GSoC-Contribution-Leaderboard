@@ -78,8 +78,8 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class LastUpdatedAdmin(admin.ModelAdmin):
-    list_display = ['gList', 'allList']
-    readonly_fields = ['gList', 'allList']
+    list_display = ['update',]
+    readonly_fields = ['update']
 
 
 admin.site.register(User, UserAdmin)
