@@ -236,3 +236,4 @@ def sortUser(_User, key):
         return all_list.order_by('-totalMergedPRs__sum')
     # defalut case for gsoc
     return all_list.order_by('-count', )
+
