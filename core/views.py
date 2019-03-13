@@ -86,7 +86,8 @@ def updateDataBase(repos):
                                                                        'user': currUser,
                                                                        'repo': curreRepo,
                                                                        'totalOpenPRs': repos[repo_][user]['open_prs'],
-                                                                       'totalMergedPRs': repos[repo_][user]['merged_prs'],
+                                                                       'totalMergedPRs': repos[repo_][user][
+                                                                           'merged_prs'],
                                                                        'totalIssues': repos[repo_][user]['issue_counts']
 
                                                                    })
@@ -94,15 +95,9 @@ def updateDataBase(repos):
                 currRelation.totalOpenPRs = repos[repo_][user]['open_prs']
                 currRelation.totalMergedPRs = repos[repo_][user]['merged_prs']
                 currRelation.totalIssues = repos[repo_][user]['issue_counts']
-
-
-
+                currRelation.save()
 
     print('finish update database' + "->" + str(datetime.datetime.now()))
-
-
-
-
 
 
 def getRepoContributors(owner, repoName, contributors_, gsoc_list, url=''):
@@ -228,10 +223,11 @@ def showGsocUser(request):
 
 
 def sortUser(_User, key):
-    all_list = _User.filter(user__gsoc=True).values('user__login', 'user__id', 'user__avatar',
-                                                    'user__gsoc').annotate(Sum('totalIssues'),
-                                                                           Sum('totalOpenPRs'),
-                                                                           Sum('totalMergedPRs'))
+    all_list = _User.filter(user__gsoc=True).extra(select={'count': 'totalOpenPRs + totalMergedPRs'}).values(
+        'user__login', 'user__id', 'user__avatar',
+        'user__gsoc').annotate(Sum('totalIssues'),
+                               Sum('totalOpenPRs'),
+                               Sum('totalMergedPRs'))
     if key == 'i':
         return all_list.order_by('-totalIssues__sum')
     if key == 'p':
@@ -239,4 +235,4 @@ def sortUser(_User, key):
     if key == 'c':
         return all_list.order_by('-totalMergedPRs__sum')
     # defalut case for gsoc
-    return all_list
+    return all_list.order_by('-count', )
