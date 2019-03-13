@@ -21,17 +21,17 @@
   <tr>
     <td><img src="{{user.user__avatar}}" height="42" width="42"></td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      <a href="https://www.github.com/{{user.fields.login}}">{{ user.user__login }}</a>
+      <a href="https://www.github.com/{{ user.user__login }}">{{ user.user__login }}</a>
     </td>
     <td></td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      {{ user.totalOpenPRs__sum }}
+      <a href="https://github.com/pulls?utf8=%E2%9C%93&q=is%3Aopen+is%3Apr+author%3A{{ user.user__login }}+archived%3Afalse+org%3ARocketChat" target="_blank" rel="noopener noreferrer">{{ user.totalOpenPRs__sum }}</a>
     </td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      {{ user.totalMergedPRs__sum }}
+      <a href="https://github.com/pulls?utf8=%E2%9C%93&q=is%3Amerged+is%3Apr+author%3A{{ user.user__login }}+archived%3Afalse+org%3ARocketChat" target="_blank" rel="noopener noreferrer">{{ user.totalMergedPRs__sum }}</a>
     </td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-      {{ user.totalIssues__sum }}
+      <a href="https://github.com/issues?utf8=%E2%9C%93&q=is%3Aissue+author%3A{{ user.user__login }}+archived%3Afalse+org%3ARocketChat" target="_blank" rel="noopener noreferrer"> {{ user.totalIssues__sum }}</a>
     </td>
   </tr>
   {% endfor %}
