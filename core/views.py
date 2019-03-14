@@ -179,7 +179,8 @@ def savePRs(repo, pullReq, contributors_, users):
             if username not in users or repo not in users[username] or users[username][repo]['lastOpenPR'] < created_at:
                 if username in contributors:
                     contributors[username]['open_prs'] += 1
-                    contributors[username]['last_open_pr'] = created_at
+                    if contributors[username]['last_open_pr'] is None or contributors[username]['last_open_pr'] < created_at:
+                        contributors[username]['last_open_pr'] = created_at
                 else:
                     contributors[username] = {}
                     contributors[username]['open_prs'] = 1
@@ -191,11 +192,10 @@ def savePRs(repo, pullReq, contributors_, users):
                     contributors[username]['avatar_url'] = pull['user']['avatar_url']
         elif 'closed' == pull['state'] and not pull['merged_at'] is None:
             if username not in users or repo not in users[username] or users[username][repo]['lastMergedPR'] < created_at:
-                print(username)
-                print(created_at)
                 if username in contributors:
                     contributors[username]['merged_prs'] += 1
-                    contributors[username]['last_merged_pr'] = created_at
+                    if contributors[username]['last_merged_pr'] is None or contributors[username]['last_merged_pr'] < created_at:
+                        contributors[username]['last_merged_pr'] = created_at
                 else:
                     contributors[username] = {}
                     contributors[username]['open_prs'] = 0
@@ -219,7 +219,8 @@ def saveIssues(repo, issues, contributors_, users):
             if username not in users or repo not in users[username] or users[username][repo]['lastIssue'] < created_at:
                 if username in contributors:
                     contributors[username]['issue_counts'] += 1
-                    contributors[username]['last_issue'] = created_at
+                    if contributors[username]['last_issue'] is None or contributors[username]['last_issue'] < created_at:
+                        contributors[username]['last_issue'] = created_at
                 else:
                     contributors[username] = {}
                     contributors[username]['issue_counts'] = 1

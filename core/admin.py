@@ -32,7 +32,7 @@ mark_repo_gsoc.short_description = "Mark as GSoC Repository"
 
 
 def remove_repo_gsoc(modeladmin, request, queryset):
-    queryset.update(gsoc=False)
+    queryset.update(openIssues = -1, totalIssues = -1, gsoc = False)
 
 
 remove_repo_gsoc.short_description = "Unmark as GSoC Repository"
