@@ -1,7 +1,7 @@
 
 # Rocket.Chat GSoC Contributions Leaderboard
 
-![Rocket.Chat GSoC Contributions Leaderboard screenshot](https://github.com/Sing-Li/bbug/blob/master/images/leaderboard.png)
+![Rocket.Chat GSoC Contributions Leaderboard screenshot](https://goo.gl/G6VNDV)
 
 A contributions leaderboard for your GSoC organization. Students can track their position on leaderboard based on the PRs, commits, and issues they've completed across the repositories of your organization on Github.
 
@@ -66,7 +66,6 @@ Start the refresh script
 ###  Architecture
 
 - The refresh script fetches contributions of users marked as GSoC candidates to selected repositories.
-- By default all the repositories are used for counting contributions and no user is marked as GSoC candidate.
 - A superuser/admin must mark the users as GSoC candidates, and can choose to not use certain repositories for counting contributions.
 - Both the django application and the refresh script run on seperate threads.
 
@@ -76,9 +75,11 @@ Start the refresh script
 
 #### Initiailization:  First steps
 
-- Click on refresh at the home page to sync your db with the latest repositories from your Organization.
+- `python manage.py refresh` to sync your db with the latest repositories from your Organization.
 - Visit `/admin`, mark the Repositories from which you want to count contributions.
-- Mark users as GSoC contributors under Core>Users form the admin panel.
+- `python manage.py refresh` to fetch the contributors from Marked Repositories.
+- Mark/Add users as GSoC contributors under Core>Users form the admin panel.
+
 
 ##### Admin levels:
 - **Exclude Repo:** Decide which Repo to count for LeaderBoard
@@ -98,8 +99,7 @@ Python scripts files:
 
 filename                           |  description
 ----------------------------------|------------------------------------------------------------------------------------
-glist.py                          |  Fetch and refresh data of GSoC candidate from the local sqlite3 database.
-model.py                          |  Contains the User and Repository Model for database.
+model.py                          |  Contains the Model for database.
 admin.py                          |  Contains the Admin Model for Administrator dashboard.
 view.py                           |  Fetch data from the Github database to a local sqlite3 database.
 setting.py                        |  Django file for settings of Project.
@@ -110,7 +110,6 @@ setting.py                        |  Django file for settings of Project.
 We welcome all contributions for any GSoC orgs, students, or community members. Feel free to contribute bug-fixes at any time. If you plan to contribute new features, utility functions or extensions, please first create an issue and discuss the feature with us. Please help us to improve our documentation, including this page!
 
 ### Some suggested  features to add
-- Show details of contribution when clicked on counts
 - Add `Lines Added/Deleted` stats.
 - Show personalized chart of commits/issues/PRs
-
+- Add Register option for User
