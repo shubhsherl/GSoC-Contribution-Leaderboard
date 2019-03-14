@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class User(models.Model):
-    login = models.TextField(null=False, db_index=True)
+    login = models.TextField(unique=True, null=False, db_index=True)
     avatar = models.TextField(null=True)
     gsoc = models.BooleanField(default=False)
 
