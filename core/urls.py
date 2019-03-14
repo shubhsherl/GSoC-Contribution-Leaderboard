@@ -1,8 +1,7 @@
 from django.urls import path
 
-from . import views, glist
+from . import views
 
 urlpatterns = [
-    path('', glist.showGsocUser, name='gsoclist'),
-    path('all_list/', views.showAll, name='all_list'),
+    path('', views.showGsocUser, name='gsoclist'),
 ]
