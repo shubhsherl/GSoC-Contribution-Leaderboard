@@ -40,7 +40,7 @@ def getOrganizationRepositories(org, url=''):
 def getOrganizationContributors(repoList):
     repos = {}
     changed_repos = []
-    repoTotalIssues = 0
+    repoTotalIssues = -1
     users = Relation.objects.get_dict()
     for repo_ in repoList:
         currRepo, created = Repository.objects.get_or_create(repo=repo_['name'],
@@ -72,7 +72,7 @@ def getOrganizationContributors(repoList):
 
     updateDataBase(repos)
 
-    return repos != {}
+    return repoTotalIssues != -1
 
 
 # TODO make refactor to this function
