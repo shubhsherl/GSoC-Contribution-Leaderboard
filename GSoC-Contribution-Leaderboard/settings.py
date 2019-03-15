@@ -20,6 +20,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API_BASE_URL = config('BASE_URL', default='https://api.github.com/')
 
 ORGANIZATION = config('ORGANIZATION', default='RocketChat')
+ORGANIZATION_LOGO = config('ORGANIZATION_LOGO', default='https://cdn.worldvectorlogo.com/logos/rocket-chat.svg')
+ORGANIZATION_SITE = config('ORGANIZATION_LOGO', default='https://rocket.chat')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -79,6 +81,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processor.global_settings',
             ],
         },
     },

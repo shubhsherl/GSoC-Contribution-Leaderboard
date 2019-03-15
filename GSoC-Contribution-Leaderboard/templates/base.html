@@ -19,12 +19,12 @@
     }
   </style>
   {% block head-css %}
-  <link rel="shortcut icon" href="https://cdn.worldvectorlogo.com/logos/rocket-chat.svg" type="image/x-icon" /> {% endblock %}
+  <link rel="shortcut icon" href="{{ ORG_LOGO }}" type="image/x-icon" /> {% endblock %}
 </head>
 
 <body>
   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'gsoclist' %}"><img src="https://cdn.worldvectorlogo.com/logos/rocket-chat.svg"
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'gsoclist' %}"><img src="{{ ORG_LOGO }}"
         height="42" width="42"> GSoC Contribution Leaderboard</a>
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
@@ -40,8 +40,8 @@
   <footer class="footer mt-auto py-3">
     <div class="container">
       <span class="text-muted">
-        <a href="https://rocket.chat">© rocket.chat</a> |
-        <a href="https://github.com/RocketChat">Github(RocketChat)</a>
+        <a href="{{ ORG_SITE }}" target="_blank" rel="noopener noreferrer">{{ORG_SITE}}</a> |
+        <a href="https://github.com/{{ORG}}" target="_blank" rel="noopener noreferrer">Github({{ORG}})</a>
       </span>
     </div>
   </footer>
