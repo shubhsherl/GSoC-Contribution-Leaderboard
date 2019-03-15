@@ -14,6 +14,7 @@ A contributions leaderboard for your GSoC organization. Students can track their
 - Track commits/PRs/issues for GSoC student candidates in real time
 - At a glance view of participating top students
 - Easy administration to add students (even before they have made their very first contribution)
+- Ability to Sort in descending order by Open, Merged Pulls, and Issues.(Default sorting is based on Open + Merged Pulls, in descending order).
 
 ## Quick Start
 
