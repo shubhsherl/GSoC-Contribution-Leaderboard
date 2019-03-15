@@ -36,6 +36,8 @@ Add your Github Auth Token and Organization name in it as following
 
 ```
 ORGANIZATION=''
+ORGANIZATION_LOGO=''
+ORGANIZATION_SITE=''
 GITHUB_AUTH_TOKEN=''
 ```
 
