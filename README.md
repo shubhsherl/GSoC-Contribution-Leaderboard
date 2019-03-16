@@ -14,7 +14,7 @@ A contributions leaderboard for your GSoC organization. Students can track their
 - Track commits/PRs/issues for GSoC student candidates in real time
 - At a glance view of participating top students
 - Easy administration to add students (even before they have made their very first contribution)
-- Ability to Sort in descending order by Open, Merged Pulls, and Issues.(Default sorting is based on Open + Merged Pulls, in descending order).
+- Ability to Sort in descending order by Open, Merged Pulls, and Issues.
 
 ## Quick Start
 
@@ -40,6 +40,7 @@ ORGANIZATION=''
 ORGANIZATION_LOGO=''
 ORGANIZATION_SITE=''
 GITHUB_AUTH_TOKEN=''
+DEFAULT_SORT=''
 ```
 
 Apply database migrations
@@ -65,6 +66,11 @@ python manage.py createsuperuser
 ```
 
 Start the refresh script
+
+### Default Sort
+`DEFAULT_SORT` used for ranking takes numberic value from 1-7. Assigned numbers for Open Pulls, Merged Pulls, Issues are 1,2,4 respectively.  
+For example: To include Open and Merged Pulls set `DEFAULT_SORT=3`. To include Merged Pulls and Issues set `DEFAULT_SORT=6`.
+
 
 ###  Architecture
 
