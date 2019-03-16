@@ -1,9 +1,9 @@
 
-# Rocket.Chat GSoC Contributions Leaderboard
+# GSoC Contributions Leaderboard
 
 ![Rocket.Chat GSoC Contributions Leaderboard screenshot](images/contribution-leaderboard.png)
 
-A contributions leaderboard for your GSoC organization. Students can track their position on leaderboard based on the PRs, commits, and issues they've completed across the repositories of your organization on Github.
+A contributions leaderboard for your GSoC organization. Students can track their position on leaderboard based on the PRs, commits, and issues they've completed across the repositories of your organization on Github.  Proudly created and maintined by the GSoC 2019 students and the [Rocket.chat community](https://github.com/RocketChat/Rocket.Chat).
 
 ## Benefits
 - Encourage students to improve their position - by increasing contribution to your organization
@@ -68,8 +68,22 @@ python manage.py createsuperuser
 Start the refresh script
 
 ### Default Sort
-`DEFAULT_SORT` used for ranking takes numberic value from 1-7. Assigned numbers for Open Pulls, Merged Pulls, Issues are 1,2,4 respectively.  
-For example: To include Open and Merged Pulls set `DEFAULT_SORT=3`. To include Merged Pulls and Issues set `DEFAULT_SORT=6`.
+
+The default sort weight only open and merged pulls, for [Rocket.Chat](https://gsoc.rocket.chat) we found this worked best for our student community.    You can flexibly change this multi-fields sort order by modifying the `.env` file.
+
+Environment variable to change for default sort order:
+
+`DEFAULT_SORT` 
+
+This variable is used for ranking.  It is encoded as:
+
+Value                           |  Metrics
+--------------------------------|----------------------------------------------------------------
+1 | Open Pulls
+2 | Merged Pulls
+3 | Issues
+
+Add the values to combine the metrics.   For example: To include Open and Merged Pulls set `DEFAULT_SORT=3`. To include Merged Pulls and Issues set `DEFAULT_SORT=6`
 
 
 ###  Architecture
