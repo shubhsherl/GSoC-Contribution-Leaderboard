@@ -23,6 +23,7 @@ ORGANIZATION = config('ORGANIZATION', default='RocketChat')
 ORGANIZATION_LOGO = config('ORGANIZATION_LOGO', default='https://cdn.worldvectorlogo.com/logos/rocket-chat.svg')
 ORGANIZATION_SITE = config('ORGANIZATION_LOGO', default='https://rocket.chat')
 
+DEFAULT_SORT = config('DEFAULT_SORT', cast=int, default=3)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 

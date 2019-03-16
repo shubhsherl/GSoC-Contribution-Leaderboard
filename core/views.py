@@ -9,6 +9,7 @@ from django.db.models import Sum
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
 BASE_URL = settings.API_BASE_URL
 ORG = settings.ORGANIZATION
+SORT = settings.DEFAULT_SORT
 
 
 def github():
@@ -252,12 +253,55 @@ def showGsocUser(request):
 
 
 def sortUser(_User, key):
-    all_list = _User.filter(user__gsoc=True).values(
-        'user__login', 'user__id', 'user__avatar',
-        'user__gsoc').annotate(Sum('totalIssues'),
-                               Sum('totalOpenPRs'),
-                               Sum('totalMergedPRs'),
-                               count=Sum('totalOpenPRs') + Sum('totalMergedPRs'))
+    if SORT == 1:
+        all_list = _User.filter(user__gsoc=True).values(
+            'user__login', 'user__id', 'user__avatar',
+            'user__gsoc').annotate(Sum('totalIssues'),
+                                   Sum('totalOpenPRs'),
+                                   Sum('totalMergedPRs'),
+                                   count=Sum('totalOpenPRs'))
+    elif SORT == 2:
+        all_list = _User.filter(user__gsoc=True).values(
+            'user__login', 'user__id', 'user__avatar',
+            'user__gsoc').annotate(Sum('totalIssues'),
+                                   Sum('totalOpenPRs'),
+                                   Sum('totalMergedPRs'),
+                                   count=Sum('totalMergedPRs'))
+    elif SORT == 3:
+        all_list = _User.filter(user__gsoc=True).values(
+            'user__login', 'user__id', 'user__avatar',
+            'user__gsoc').annotate(Sum('totalIssues'),
+                                   Sum('totalOpenPRs'),
+                                   Sum('totalMergedPRs'),
+                                   count=Sum('totalOpenPRs') + Sum('totalMergedPRs'))
+    elif SORT == 4:
+        all_list = _User.filter(user__gsoc=True).values(
+            'user__login', 'user__id', 'user__avatar',
+            'user__gsoc').annotate(Sum('totalIssues'),
+                                   Sum('totalOpenPRs'),
+                                   Sum('totalMergedPRs'),
+                                   count=Sum('totalIssues'))
+    elif SORT == 5:
+        all_list = _User.filter(user__gsoc=True).values(
+            'user__login', 'user__id', 'user__avatar',
+            'user__gsoc').annotate(Sum('totalIssues'),
+                                   Sum('totalOpenPRs'),
+                                   Sum('totalMergedPRs'),
+                                   count=Sum('totalOpenPRs') + Sum('totalIssues'))
+    elif SORT == 6:
+        all_list = _User.filter(user__gsoc=True).values(
+            'user__login', 'user__id', 'user__avatar',
+            'user__gsoc').annotate(Sum('totalIssues'),
+                                   Sum('totalOpenPRs'),
+                                   Sum('totalMergedPRs'),
+                                   count=Sum('totalMergedPRs') + Sum('totalIssues'))
+    elif SORT == 7:
+        all_list = _User.filter(user__gsoc=True).values(
+            'user__login', 'user__id', 'user__avatar',
+            'user__gsoc').annotate(Sum('totalIssues'),
+                                   Sum('totalOpenPRs'),
+                                   Sum('totalMergedPRs'),
+                                   count=Sum('totalIssues') + Sum('totalMergedPRs') + Sum('totalIssues'))
     if key == 'i':
         return all_list.order_by('-totalIssues__sum')
     if key == 'p':
