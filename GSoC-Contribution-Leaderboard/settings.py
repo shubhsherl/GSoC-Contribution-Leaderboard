@@ -24,6 +24,8 @@ ORGANIZATION_LOGO = config('ORGANIZATION_LOGO', default='https://cdn.worldvector
 ORGANIZATION_SITE = config('ORGANIZATION_LOGO', default='https://rocket.chat')
 
 DEFAULT_SORT = config('DEFAULT_SORT', cast=int, default=3)
+SHOW_RANK = config('SHOW_RANK', cast=bool, default=False)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 

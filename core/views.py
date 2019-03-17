@@ -10,6 +10,7 @@ AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
 BASE_URL = settings.API_BASE_URL
 ORG = settings.ORGANIZATION
 SORT = settings.DEFAULT_SORT
+SHOW_RANK = settings.SHOW_RANK
 
 
 def github():
@@ -248,6 +249,7 @@ def showGsocUser(request):
     context = {
         'users': data,
         'updated': lastUpdated,
+        'show_rank': SHOW_RANK,
     }
     return render(request, 'core/gsoclist.html', context)
 
@@ -302,11 +304,26 @@ def sortUser(_User, key):
                                    Sum('totalOpenPRs'),
                                    Sum('totalMergedPRs'),
                                    count=Sum('totalIssues') + Sum('totalMergedPRs') + Sum('totalIssues'))
+    all_list = all_list.order_by('-count','user__pk')
+    rank = 1
+    previous = None
+    entries = list(all_list)
+    previous = entries[0]
+    previous['rank'] = 1
+    for i, entry in enumerate(entries[1:]):
+        if entry['count'] != previous['count']:
+            rank = i + 2
+            entry['rank'] = str(rank)
+        else:
+            entry['rank'] = str(rank)
+            previous['rank'] = entry['rank']
+        previous = entry
     if key == 'i':
-        return all_list.order_by('-totalIssues__sum')
-    if key == 'p':
-        return all_list.order_by('-totalOpenPRs__sum')
-    if key == 'c':
-        return all_list.order_by('-totalMergedPRs__sum')
-    # defalut case for gsoc
-    return all_list.order_by('-count', )
+        entries.sort(key = lambda v:v['totalIssues__sum'], reverse=True)
+    elif key == 'p':
+        entries.sort(key = lambda v:v['totalOpenPRs__sum'], reverse=True)
+    elif key == 'm':
+        entries.sort(key = lambda v:v['totalMergedPRs__sum'], reverse=True)
+    else:
+        entries.sort(key = lambda v:v['count'], reverse=True)
+    return entries
