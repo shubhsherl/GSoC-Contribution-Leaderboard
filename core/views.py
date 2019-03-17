@@ -250,6 +250,7 @@ def showGsocUser(request):
         'users': data,
         'updated': lastUpdated,
         'show_rank': SHOW_RANK,
+        'total': len(data),
     }
     return render(request, 'core/gsoclist.html', context)
 
