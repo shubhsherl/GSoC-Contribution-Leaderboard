@@ -41,6 +41,7 @@ ORGANIZATION_LOGO=''
 ORGANIZATION_SITE=''
 GITHUB_AUTH_TOKEN=''
 DEFAULT_SORT=''
+SHOW_RANK=''
 ```
 
 Apply database migrations
@@ -81,7 +82,7 @@ Value                           |  Metrics
 --------------------------------|----------------------------------------------------------------
 1 | Open Pulls
 2 | Merged Pulls
-3 | Issues
+4 | Issues
 
 Add the values to combine the metrics.   For example: To include Open and Merged Pulls set `DEFAULT_SORT=3`. To include Merged Pulls and Issues set `DEFAULT_SORT=6`
 
