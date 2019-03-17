@@ -21,7 +21,7 @@
   {% for user in users %}
   <tr>
     {% if show_rank %}
-    <td>{{ user.rank }}</td>
+    <td style="color: black;-webkit-text-fill-color: white;-webkit-text-stroke-width: 1px;-webkit-text-stroke-color: black;">{{ user.rank }}</td>
     {% endif %}
     <td><img src="{{user.user__avatar}}" height="42" width="42"></td>
     <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
