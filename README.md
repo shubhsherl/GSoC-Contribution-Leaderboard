@@ -134,6 +134,4 @@ setting.py                        |  Django file for settings of Project.
 We welcome all contributions for any GSoC orgs, students, or community members. Feel free to contribute bug-fixes at any time. If you plan to contribute new features, utility functions or extensions, please first create an issue and discuss the feature with us. Please help us to improve our documentation, including this page!
 
 ### Some suggested  features to add
-- Add `Lines Added/Deleted` stats.
-- Show personalized chart of commits/issues/PRs
-- Add Register option for User
+Check out [issues](https://github.com/shubhsherl/GSoC-Contribution-Leaderboard/issues) for labels [FEATURE](https://github.com/shubhsherl/GSoC-Contribution-Leaderboard/labels/feature), [ENHANCEMENT](https://github.com/shubhsherl/GSoC-Contribution-Leaderboard/labels/enhancement), or [GOOD FIRST ISSUE](https://github.com/shubhsherl/GSoC-Contribution-Leaderboard/labels/good%20first%20issue).
