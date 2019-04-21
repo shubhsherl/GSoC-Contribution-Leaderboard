@@ -20,6 +20,7 @@ class Repository(models.Model):
     repo = models.TextField(unique=True, null=False)
     gsoc = models.BooleanField(default=False)
     openIssues = models.IntegerField(default=-1)
+    updatedAt = models.DateTimeField(auto_now=datetime(2000,1,1,1,30,30))
     totalIssues = models.IntegerField(default=-1)
 
     users = models.ManyToManyField(
@@ -34,7 +35,7 @@ class RelationManager(models.Manager):
         from django.db import connection
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT r.id, u.login, re.repo, r.lastMergedPR, r.lastOpenPR, r.lastIssue 
+                SELECT r.id, u.login, re.repo, r.lastMergedPR, r.lastOpenPR, r.lastIssue, r.lastClosedPR
                 FROM core_relation r, core_user u, core_repository re
                 WHERE r.user_id = u.id AND r.repo_id = re.id
                 """)
@@ -44,6 +45,7 @@ class RelationManager(models.Manager):
                     'lastMergedPR': row[3],
                     'lastOpenPR': row[4],
                     'lastIssue': row[5],
+                    'lastClosedPR': row[6],
                 }
                 user = row[1]
                 repo = row[2]
@@ -59,8 +61,12 @@ class Relation(models.Model):
     totalMergedPRs = models.IntegerField(default=0)
     totalOpenPRs = models.IntegerField(default=0)
     totalIssues = models.IntegerField(default=0)
+    #for merged PR merged_at
     lastMergedPR = models.DateTimeField(default=datetime(2000,1,1,1,30,30))
+    #for open PR created_at
     lastOpenPR = models.DateTimeField(auto_now=datetime(2000,1,1,1,30,30))
+    #for closed PR closed_at
+    lastClosedPR = models.DateTimeField(auto_now=datetime(2000,1,1,1,30,30))
     lastIssue = models.DateTimeField(auto_now=datetime(2000,1,1,1,30,30))
     objects = RelationManager()
 

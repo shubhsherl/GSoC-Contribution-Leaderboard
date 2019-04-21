@@ -51,25 +51,29 @@ def getOrganizationContributors(repoList):
         if currRepo.gsoc:
             repoTotalIssues = getRepoTotalIssueCount(repo_)
         if currRepo.gsoc and (currRepo.totalIssues != repoTotalIssues or currRepo.openIssues != repo_['open_issues']):
-            n = repoTotalIssues - currRepo.totalIssues
             new_added = (currRepo.totalIssues == -1)
+            n = repoTotalIssues - currRepo.totalIssues
+            if n <= 0:
+                n = 50
             currRepo.openIssues = repo_['open_issues']
             currRepo.totalIssues = repoTotalIssues
             currRepo.save()
             changed_repos.append(
-                [currRepo, {'number': n, 'new_added': new_added, }])
+                [currRepo, {'new_added': new_added, 'number': n, }])
 
     for repo in changed_repos:
         repo_ = repo[0]
-        number = repo[1]['number']
         new_added = repo[1]['new_added']
+        number = repo[1]['number']
+        updated_at = repo_.updatedAt.replace(tzinfo=None)
+        updated_at = updated_at.strftime("%Y-%m-%dT%H:%M:%SZ")
         contributors = {}
         owner = repo_.owner
         repo_name = repo_.repo
-        contributors = getRepoIssues(
-            owner, repo_name, contributors, users, number, new_added)
+        contributors, updated_prs = getRepoIssues(
+            owner, repo_name, contributors, users, number, new_added, updated_at)
         contributors = getRepoPR(
-            owner, repo_name, contributors, users, number, new_added)
+            owner, repo_name, contributors, users, new_added, updated_prs)
         repos[repo_name] = contributors
 
     updateDataBase(repos)
@@ -92,6 +96,8 @@ def updateDataBase(repos):
                 currRelation.totalIssues = repos[repo_][user]['issue_counts']
                 if repos[repo_][user]['last_merged_pr'] is not None:
                     currRelation.lastMergedPR = repos[repo_][user]['last_merged_pr']
+                if repos[repo_][user]['last_closed_pr'] is not None:
+                    currRelation.lastClosedPR = repos[repo_][user]['last_closed_pr']
                 if repos[repo_][user]['last_open_pr'] is not None:
                     currRelation.lastOpenPR = repos[repo_][user]['last_open_pr']
                 if repos[repo_][user]['last_issue'] is not None:
@@ -100,13 +106,16 @@ def updateDataBase(repos):
             else:
                 currRelation.totalOpenPRs = currRelation.totalOpenPRs + \
                     repos[repo_][user]['open_prs'] - \
-                    repos[repo_][user]['merged_prs']
+                    repos[repo_][user]['merged_prs'] - \
+                    repos[repo_][user]['closed_prs']
                 currRelation.totalMergedPRs = currRelation.totalMergedPRs + \
                     repos[repo_][user]['merged_prs']
                 currRelation.totalIssues = currRelation.totalIssues + \
                     repos[repo_][user]['issue_counts']
                 if repos[repo_][user]['last_merged_pr'] is not None:
                     currRelation.lastMergedPR = repos[repo_][user]['last_merged_pr']
+                if repos[repo_][user]['last_closed_pr'] is not None:
+                    currRelation.lastClosedPR = repos[repo_][user]['last_closed_pr']
                 if repos[repo_][user]['last_open_pr'] is not None:
                     currRelation.lastOpenPR = repos[repo_][user]['last_open_pr']
                 if repos[repo_][user]['last_issue'] is not None:
@@ -114,7 +123,7 @@ def updateDataBase(repos):
                 currRelation.save()
 
 
-def getRepoPR(owner, repoName, contributors_, users, number, new_added, url=''):
+def getRepoPR(owner, repoName, contributors_, users, new_added, updated_prs, url=''):
     contributors = contributors_
     if not url:
         if new_added:
@@ -122,38 +131,41 @@ def getRepoPR(owner, repoName, contributors_, users, number, new_added, url=''):
                 'repos/%s/%s/pulls?per_page=100&state=all' % (owner, repoName)
         else:
             url = BASE_URL + \
-                'repos/%s/%s/pulls?per_page=%d&state=all' % (
-                    owner, repoName, number)
+                'repos/%s/%s/pulls?sort=updated&per_page=%d&state=all&direction=desc' % (
+                    owner, repoName, updated_prs)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if response.status_code == 200:  # 200 = SUCCESS
         pulls = response.json()
-        savePRs(repoName, pulls, contributors, users)
+        savePRs(repoName, pulls, contributors, users, new_added)
         if 'next' in response.links and new_added:
             contributors = getRepoPR(
-                owner, repoName, contributors, users, number, new_added, response.links['next']['url'])
+                owner, repoName, contributors, users, new_added, updated_prs, response.links['next']['url'])
     return contributors
 
 
-def getRepoIssues(owner, repoName, contributors_, users, number, new_added, url=''):
+def getRepoIssues(owner, repoName, contributors_, users, number, new_added, last_updated_at, url=''):
     contributors = contributors_
+    updated_prs = 0
     if not url:
         if new_added:
             url = BASE_URL + \
                 'repos/%s/%s/issues?per_page=100&state=all' % (owner, repoName)
         else:
             url = BASE_URL + \
-                'repos/%s/%s/issues?per_page=%d&state=all' % (
-                    owner, repoName, number)
+                'repos/%s/%s/issues?per_page=100&state=all&since=%s&sort=updated' % (
+                    owner, repoName, last_updated_at)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if response.status_code == 200:  # 200 = SUCCESS
         issues = response.json()
-        saveIssues(repoName, issues, contributors, users)
-        if 'next' in response.links and new_added:
-            getRepoIssues(owner, repoName, contributors, users,
-                          number, new_added, response.links['next']['url'])
-    return contributors
+        _, u = saveIssues(repoName, issues, contributors, users)
+        updated_prs = updated_prs + u
+        if 'next' in response.links:
+            _, u = getRepoIssues(owner, repoName, contributors, users,
+                                 number, new_added, last_updated_at, response.links['next']['url'])
+            updated_prs = updated_prs + u
+    return contributors, updated_prs
 
 
 def getRepoTotalIssueCount(repo):
@@ -161,7 +173,8 @@ def getRepoTotalIssueCount(repo):
     repoName = repo['name']
     owner = repo['owner']['login']
     url = BASE_URL + \
-        'repos/%s/%s/issues?per_page=1&state=all' % (owner, repoName)
+        'repos/%s/%s/issues?per_page=1&state=all&sort=updated_at' % (
+            owner, repoName)
     response = requests.get(
         url, headers={"Authorization": "token " + AUTH_TOKEN})
     if (response.status_code == 200):  # 200 = SUCCESS
@@ -171,13 +184,13 @@ def getRepoTotalIssueCount(repo):
     return totalIssueCount
 
 
-def savePRs(repo, pullReq, contributors_, users):
+def savePRs(repo, pullReq, contributors_, users, new_added):
     contributors = contributors_
     for pull in pullReq:
         username = pull['user']['login'].lower()
-        created_at = datetime.strptime(
-            pull['created_at'], '%Y-%m-%dT%H:%M:%SZ')
         if 'open' == pull['state']:
+            created_at = datetime.strptime(
+                pull['created_at'], '%Y-%m-%dT%H:%M:%SZ')
             if username not in users or repo not in users[username] or users[username][repo]['lastOpenPR'] < created_at:
                 if username in contributors:
                     contributors[username]['open_prs'] += 1
@@ -188,23 +201,46 @@ def savePRs(repo, pullReq, contributors_, users):
                     contributors[username]['open_prs'] = 1
                     contributors[username]['issue_counts'] = 0
                     contributors[username]['merged_prs'] = 0
+                    contributors[username]['closed_prs'] = 0
                     contributors[username]['last_open_pr'] = created_at
                     contributors[username]['last_merged_pr'] = None
+                    contributors[username]['last_closed_pr'] = None
                     contributors[username]['last_issue'] = None
                     contributors[username]['avatar_url'] = pull['user']['avatar_url']
         elif 'closed' == pull['state'] and not pull['merged_at'] is None:
-            if username not in users or repo not in users[username] or users[username][repo]['lastMergedPR'] < created_at:
+            merged_at = datetime.strptime(
+                pull['merged_at'], '%Y-%m-%dT%H:%M:%SZ')
+            if username not in users or repo not in users[username] or users[username][repo]['lastMergedPR'] < merged_at:
                 if username in contributors:
                     contributors[username]['merged_prs'] += 1
-                    if contributors[username]['last_merged_pr'] is None or contributors[username]['last_merged_pr'] < created_at:
-                        contributors[username]['last_merged_pr'] = created_at
+                    if contributors[username]['last_merged_pr'] is None or contributors[username]['last_merged_pr'] < merged_at:
+                        contributors[username]['last_merged_pr'] = merged_at
                 else:
                     contributors[username] = {}
                     contributors[username]['open_prs'] = 0
                     contributors[username]['issue_counts'] = 0
                     contributors[username]['merged_prs'] = 1
+                    contributors[username]['closed_prs'] = 0
                     contributors[username]['last_open_pr'] = None
-                    contributors[username]['last_merged_pr'] = created_at
+                    contributors[username]['last_closed_pr'] = None
+                    contributors[username]['last_merged_pr'] = merged_at
+                    contributors[username]['last_issue'] = None
+                    contributors[username]['avatar_url'] = pull['user']['avatar_url']
+        elif not new_added and 'closed' == pull['state'] and pull['merged_at'] is None:
+            closed_at = datetime.strptime(
+                pull['closed_at'], '%Y-%m-%dT%H:%M:%SZ')
+            if username not in users or repo not in users[username] or users[username][repo]['lastClosedPR'] < closed_at:
+                if username in contributors:
+                    contributors[username]['closed_prs'] += 1
+                else:
+                    contributors[username] = {}
+                    contributors[username]['open_prs'] = 0
+                    contributors[username]['issue_counts'] = 0
+                    contributors[username]['merged_prs'] = 0
+                    contributors[username]['closed_prs'] = 1
+                    contributors[username]['last_open_pr'] = None
+                    contributors[username]['last_merged_pr'] = None
+                    contributors[username]['last_closed_pr'] = closed_at
                     contributors[username]['last_issue'] = None
                     contributors[username]['avatar_url'] = pull['user']['avatar_url']
 
@@ -213,6 +249,7 @@ def savePRs(repo, pullReq, contributors_, users):
 
 def saveIssues(repo, issues, contributors_, users):
     contributors = contributors_
+    updated_prs = 0
     for issue in issues:
         if 'pull_request' not in issue:
             username = issue['user']['login'].lower()
@@ -230,10 +267,13 @@ def saveIssues(repo, issues, contributors_, users):
                     contributors[username]['open_prs'] = 0
                     contributors[username]['last_open_pr'] = None
                     contributors[username]['last_merged_pr'] = None
+                    contributors[username]['last_closed_pr'] = None
                     contributors[username]['merged_prs'] = 0
+                    contributors[username]['closed_prs'] = 0
                     contributors[username]['avatar_url'] = issue['user']['avatar_url']
-
-    return contributors
+        else:
+            updated_prs = updated_prs + 1
+    return contributors, updated_prs
 
 
 def showGsocUser(request):
@@ -305,11 +345,14 @@ def sortUser(_User, key):
                                    Sum('totalOpenPRs'),
                                    Sum('totalMergedPRs'),
                                    count=Sum('totalIssues') + Sum('totalMergedPRs') + Sum('totalIssues'))
-    all_list = all_list.order_by('-count','user__pk')
+    all_list = all_list.order_by('-count', 'user__pk')
     rank = 1
     previous = None
     entries = list(all_list)
-    previous = entries[0]
+    if len(entries) > 0:
+        previous = entries[0]
+    else:
+        previous = {}
     previous['rank'] = 1
     for i, entry in enumerate(entries[1:]):
         if entry['count'] != previous['count']:
@@ -320,11 +363,11 @@ def sortUser(_User, key):
             previous['rank'] = entry['rank']
         previous = entry
     if key == 'i':
-        entries.sort(key = lambda v:v['totalIssues__sum'], reverse=True)
+        entries.sort(key=lambda v: v['totalIssues__sum'], reverse=True)
     elif key == 'p':
-        entries.sort(key = lambda v:v['totalOpenPRs__sum'], reverse=True)
+        entries.sort(key=lambda v: v['totalOpenPRs__sum'], reverse=True)
     elif key == 'm':
-        entries.sort(key = lambda v:v['totalMergedPRs__sum'], reverse=True)
+        entries.sort(key=lambda v: v['totalMergedPRs__sum'], reverse=True)
     else:
-        entries.sort(key = lambda v:v['count'], reverse=True)
+        entries.sort(key=lambda v: v['count'], reverse=True)
     return entries

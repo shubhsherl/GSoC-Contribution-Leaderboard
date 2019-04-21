@@ -4,7 +4,6 @@ from django.conf import settings
 import requests
 
 
-
 AUTH_TOKEN = settings.GITHUB_AUTH_TOKEN
 BASE_URL = settings.API_BASE_URL
 ORG = settings.ORGANIZATION
@@ -32,7 +31,7 @@ mark_repo_gsoc.short_description = "Mark as GSoC Repository"
 
 
 def remove_repo_gsoc(modeladmin, request, queryset):
-    queryset.update(openIssues = -1, totalIssues = -1, gsoc = False)
+    queryset.update(openIssues=-1, totalIssues=-1, gsoc=False)
 
 
 remove_repo_gsoc.short_description = "Unmark as GSoC Repository"
@@ -56,7 +55,8 @@ class UserAdmin(admin.ModelAdmin):
             messages.error(request, 'Invalid User')
             return False
         super().save_model(request, obj, form, change)
-        base_repo, created = Repository.objects.get_or_create(repo=ORG, defaults={'gsoc': True})
+        base_repo, created = Repository.objects.get_or_create(
+            repo=ORG, defaults={'gsoc': True})
         Relation.objects.get_or_create(repo=base_repo, user=obj)
 
 
@@ -67,7 +67,7 @@ class LastUpdatedAdmin(admin.ModelAdmin):
 
 class RepositoryAdmin(admin.ModelAdmin):
     list_display = ['repo', 'owner', 'gsoc']
-    readonly_fields = ['owner', 'repo']
+    readonly_fields = ['owner', 'repo', 'updatedAt']
     list_filter = ['gsoc']
     search_fields = ['owner', 'repo']
     actions = [mark_repo_gsoc, remove_repo_gsoc]
@@ -75,11 +75,12 @@ class RepositoryAdmin(admin.ModelAdmin):
 
 class RelationAdmin(admin.ModelAdmin):
     list_display = ['user', 'repo']
-    readonly_fields = ['totalMergedPRs', 'totalOpenPRs', 'totalIssues', 'lastMergedPR', 'lastOpenPR', 'lastIssue']
+    readonly_fields = ['totalMergedPRs', 'totalOpenPRs',
+                       'totalIssues', 'lastMergedPR', 'lastOpenPR', 'lastIssue']
     search_fields = ['user__login']
 
 
 admin.site.register(User, UserAdmin)
 admin.site.register(LastUpdate, LastUpdatedAdmin)
 admin.site.register(Repository, RepositoryAdmin)
-admin.site.register(Relation,RelationAdmin)
+admin.site.register(Relation, RelationAdmin)
