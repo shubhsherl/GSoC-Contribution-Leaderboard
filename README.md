@@ -3,6 +3,8 @@
 
 ![Rocket.Chat GSoC Contributions Leaderboard screenshot](images/contribution-leaderboard.png)
 
+This project is now moved to Node.js version and maintained [here](https://github.com/lolimay/GSoC-Contribution-Leaderboard-Node).
+
 A contributions leaderboard for your GSoC organization. Students can track their position on leaderboard based on the PRs, commits, and issues they've completed across the repositories of your organization on Github.  Proudly created and maintined by the GSoC 2019 students and the [Rocket.chat community](https://github.com/RocketChat/Rocket.Chat).
 
 ## Benefits
